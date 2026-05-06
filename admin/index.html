@@ -548,21 +548,35 @@
                 .replaceAll("'", '&#039;');
         }
 
-        function normalizeProduct(product) {
-            const widthCm = Math.max(1, Number(product.widthCm) || 150);
-            const price = Math.max(0, Number(product.price) || 0);
+        function firstText(...values) {
+            for (const value of values) {
+                const text = String(value ?? '').trim();
+                if (text) return text;
+            }
+            return '';
+        }
+
+        function normalizeProduct(product = {}) {
+            const category = CATEGORY_LABELS[product.category] ? product.category : CATEGORY_LABELS[product.grade] ? product.grade : 'basic';
+            const categoryLabel = CATEGORY_LABELS[category] || '옷장';
+            const widthCm = Math.max(1, Number(product.widthCm || product.width || product.sizeCm || product.cm) || 150);
+            const price = Math.max(0, Number(product.price || product.estimate || product.quote || product.cost) || 0);
             const moduleCount = Math.max(1, Math.ceil(widthCm / 30));
+            const name = firstText(product.name, product.modelName, product.moduleName, product.model, product.title, `${categoryLabel} ${widthCm}cm`);
+            const site = firstText(product.site, product.siteName, product.location, product.locationName, product.fieldName, product.projectSite, product.scene, product.address, '현장명 준비 중');
+            const composition = firstText(product.composition, product.moduleComposition, product.modules, product.structure, product.config, product.configuration, '장 구성 준비 중');
+            const image = firstText(product.image, product.imageUrl, product.thumbnail, product.thumbnailImage, product.photo, product.photoUrl);
 
             return {
                 id: product.id || `item-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-                category: CATEGORY_LABELS[product.category] ? product.category : 'basic',
-                name: String(product.name || '상품명').trim(),
-                site: String(product.site || '목업 현장').trim(),
-                composition: String(product.composition || '짧은장+긴장+서랍장').trim(),
+                category,
+                name,
+                site,
+                composition,
                 widthCm,
                 price,
-                unitPrice: Math.max(0, Number(product.unitPrice) || Math.ceil(price / moduleCount)),
-                image: String(product.image || '').trim()
+                unitPrice: Math.max(0, Number(product.unitPrice || product.pricePerUnit) || Math.ceil(price / moduleCount)),
+                image
             };
         }
 
@@ -631,8 +645,8 @@
                 <article class="item-card">
                     <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
                     <div class="item-main">
-                        <strong>${escapeHtml(item.name)}</strong>
-                        <span>${escapeHtml(item.site)} · ${escapeHtml(item.composition)} · ${item.widthCm}cm · ${formatPrice(item.price)} · 단가 ${formatPrice(item.unitPrice)}</span>
+                        <strong title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</strong>
+                        <span title="${escapeHtml(item.site)} · ${escapeHtml(item.composition)}">${escapeHtml(item.site)} · ${escapeHtml(item.composition)} · ${item.widthCm}cm · ${formatPrice(item.price)} · 단가 ${formatPrice(item.unitPrice)}</span>
                         <div class="item-actions">
                             <button class="small-button" data-edit="${item.id}">수정</button>
                             <button class="small-button danger-button" data-delete="${item.id}">삭제</button>

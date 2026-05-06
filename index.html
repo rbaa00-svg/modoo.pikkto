@@ -1753,21 +1753,35 @@
             return escapeHtml(value);
         }
 
-        function normalizeProduct(product) {
-            const widthCm = Math.max(1, Number(product.widthCm) || 150);
-            const price = Math.max(0, Number(product.price) || 0);
+        function firstText(...values) {
+            for (const value of values) {
+                const text = String(value ?? '').trim();
+                if (text) return text;
+            }
+            return '';
+        }
+
+        function normalizeProduct(product = {}) {
+            const category = CATEGORY_LABELS[product.category] ? product.category : CATEGORY_LABELS[product.grade] ? product.grade : 'basic';
+            const categoryLabel = CATEGORY_LABELS[category] || '옷장';
+            const widthCm = Math.max(1, Number(product.widthCm || product.width || product.sizeCm || product.cm) || 150);
+            const price = Math.max(0, Number(product.price || product.estimate || product.quote || product.cost) || 0);
             const moduleCount = Math.max(1, Math.ceil(widthCm / 30));
+            const name = firstText(product.name, product.modelName, product.moduleName, product.model, product.title, `${categoryLabel} ${widthCm}cm`);
+            const site = firstText(product.site, product.siteName, product.location, product.locationName, product.fieldName, product.projectSite, product.scene, product.address, '현장명 준비 중');
+            const composition = firstText(product.composition, product.moduleComposition, product.modules, product.structure, product.config, product.configuration, '장 구성 준비 중');
+            const image = firstText(product.image, product.imageUrl, product.thumbnail, product.thumbnailImage, product.photo, product.photoUrl);
 
             return {
                 id: product.id || `item-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-                category: CATEGORY_LABELS[product.category] ? product.category : 'basic',
-                name: String(product.name || '상품명').trim(),
-                site: String(product.site || '목업 현장').trim(),
-                composition: String(product.composition || '짧은장+긴장+서랍장').trim(),
+                category,
+                name,
+                site,
+                composition,
                 widthCm,
                 price,
-                unitPrice: Math.max(0, Number(product.unitPrice) || Math.ceil(price / moduleCount)),
-                image: String(product.image || '').trim()
+                unitPrice: Math.max(0, Number(product.unitPrice || product.pricePerUnit) || Math.ceil(price / moduleCount)),
+                image
             };
         }
 
@@ -1837,9 +1851,9 @@
                             </div>
                             <div class="product-body">
                                 <div class="product-badge ${item.category === 'premium' ? 'premium' : item.category === 'sliding' ? 'sliding' : ''}">${escapeHtml(item.categoryLabel)}</div>
-                                <h3>${escapeHtml(item.name)}</h3>
-                                <p class="product-site">${escapeHtml(item.site)}</p>
-                                <p class="product-composition">${escapeHtml(item.composition)}</p>
+                                <h3 title="${escapeAttr(item.name)}">${escapeHtml(item.name)}</h3>
+                                <p class="product-site" title="${escapeAttr(item.site)}">${escapeHtml(item.site)}</p>
+                                <p class="product-composition" title="${escapeAttr(item.composition)}">${escapeHtml(item.composition)}</p>
                                 <div class="product-meta">
                                     <span>${item.widthCm}cm</span>
                                     <strong class="${item.category === 'premium' ? 'premium' : ''}">${formatPrice(item.price)}</strong>
