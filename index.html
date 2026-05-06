@@ -807,9 +807,17 @@
             position: relative;
             display: flex;
             justify-content: center;
+            align-items: stretch;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .module-run {
+            height: 100%;
+            position: relative;
+            display: flex;
             gap: 4px;
             padding: 10px 7px 0;
-            overflow: hidden;
         }
 
         .module-empty {
@@ -1722,6 +1730,7 @@
         const KAKAO_OPEN_CHAT_URL = 'https://open.kakao.com/o/gttYvDsi';
         const SPECIAL_BENEFIT_RATE = 0.07;
         const CABINET_WIDTH_OPTIONS = [1000, 900, 800, 700, 600, 500];
+        const MODULE_PREVIEW_MAX_MM = 3700;
         const MIN_FINISH_MM = 20;
         const MAX_FINISH_MM = 200;
         let catalog = loadCatalog();
@@ -1949,7 +1958,7 @@
             document.getElementById('widthInput').blur();
         }
 
-        function updateModulePreview(cabinetWidths, config) {
+        function updateModulePreview(cabinetWidths, config, widthCm = 0) {
             const preview = document.getElementById('modulePreview');
             preview.innerHTML = '';
             const widths = Array.isArray(cabinetWidths) ? cabinetWidths : [];
@@ -1958,10 +1967,18 @@
                 return;
             }
 
+            const cabinetTotalMm = widths.reduce((sum, width) => sum + Number(width || 0), 0);
+            const targetMm = Math.max(cabinetTotalMm, Math.round(Number(widthCm || 0) * 10));
+            const previewScale = Math.min(1, targetMm / MODULE_PREVIEW_MAX_MM);
+            const run = document.createElement('div');
+            run.className = 'module-run';
+            run.style.width = `${Math.max(24, previewScale * 100).toFixed(2)}%`;
+            preview.appendChild(run);
+
             ['left', 'right', 'top'].forEach((position) => {
                 const finish = document.createElement('span');
                 finish.className = `module-finish ${position}`;
-                preview.appendChild(finish);
+                run.appendChild(finish);
             });
 
             widths.forEach((width, i) => {
@@ -1980,7 +1997,7 @@
 
                 module.appendChild(line);
                 module.appendChild(label);
-                preview.appendChild(module);
+                run.appendChild(module);
             });
         }
 
@@ -2081,7 +2098,7 @@
                 jaResult.innerText = '';
                 regularPrice.innerHTML = '0<small>원</small>';
                 totalPrice.innerHTML = '0<small>원</small>';
-                updateModulePreview([], config);
+                updateModulePreview([], config, cmValue);
                 return;
             }
 
@@ -2093,7 +2110,7 @@
             jaResult.innerText = `${estimateWidth.label} ${cmValue}cm · 장폭 ${formatCabinetWidths(cabinetWidths)} · ${FINISH_SUMMARY}`;
             regularPrice.innerHTML = `${price.toLocaleString()}<small>원</small>`;
             totalPrice.innerHTML = `${benefitPrice.toLocaleString()}<small>원</small>`;
-            updateModulePreview(cabinetWidths, config);
+            updateModulePreview(cabinetWidths, config, cmValue);
         }
 
         function openPhotoDialog() {
