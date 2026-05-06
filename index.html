@@ -761,17 +761,10 @@
             width: 5px;
         }
 
-        .module-finish.top-left {
+        .module-finish.top {
             top: 0;
-            left: 9px;
-            width: calc(50% - 12px);
-            height: 5px;
-        }
-
-        .module-finish.top-right {
-            top: 0;
-            right: 9px;
-            width: calc(50% - 12px);
+            left: 0;
+            right: 0;
             height: 5px;
         }
 
@@ -781,6 +774,24 @@
             right: 0;
             border-top: 2px solid #94a3b8;
             animation: drawLine 0.32s ease-out both;
+        }
+
+        .module-width-label {
+            position: absolute;
+            left: 50%;
+            bottom: 7px;
+            z-index: 2;
+            transform: translateX(-50%);
+            padding: 3px 5px;
+            border: 1px solid #cbd5e1;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #475569;
+            font-size: 10px;
+            font-weight: 950;
+            line-height: 1;
+            white-space: nowrap;
+            pointer-events: none;
         }
 
         .module-line.middle {
@@ -1410,7 +1421,7 @@
                 width: 370
             }
         };
-        const FINISH_SUMMARY = '마감재 4개(좌1·우1·상단2)';
+        const FINISH_SUMMARY = '좌·우·상단 마감재 포함';
         const KAKAO_OPEN_CHAT_URL = 'https://open.kakao.com/o/gttYvDsi';
         const SPECIAL_BENEFIT_RATE = 0.07;
         let catalog = loadCatalog();
@@ -1638,21 +1649,22 @@
             document.getElementById('widthInput').blur();
         }
 
-        function updateModulePreview(cabinetCount, config) {
+        function updateModulePreview(cabinetWidths, config) {
             const preview = document.getElementById('modulePreview');
             preview.innerHTML = '';
+            const widths = Array.isArray(cabinetWidths) ? cabinetWidths : [];
 
-            if (cabinetCount <= 0) {
+            if (widths.length <= 0) {
                 return;
             }
 
-            ['left', 'right', 'top-left', 'top-right'].forEach((position) => {
+            ['left', 'right', 'top'].forEach((position) => {
                 const finish = document.createElement('span');
                 finish.className = `module-finish ${position}`;
                 preview.appendChild(finish);
             });
 
-            for (let i = 0; i < cabinetCount; i++) {
+            widths.forEach((width, i) => {
                 const module = document.createElement('span');
                 module.className = 'module-unit';
 
@@ -1660,13 +1672,35 @@
                 const lineType = config === 'expert' ? ['middle', 'top', 'bottom'][i % 3] : 'middle';
                 line.className = `module-line ${lineType}`;
 
+                const label = document.createElement('span');
+                label.className = 'module-width-label';
+                label.textContent = width;
+
                 module.appendChild(line);
+                module.appendChild(label);
                 preview.appendChild(module);
-            }
+            });
         }
 
         function getCabinetCount(widthCm) {
             return Math.max(1, Math.round(Number(widthCm || 0) / 90));
+        }
+
+        function getCabinetWidths(widthCm) {
+            const cabinetCount = getCabinetCount(widthCm);
+            const targetMm = Math.max(0, Math.round(Number(widthCm || 0) * 10));
+            const widths = Array(cabinetCount).fill(900);
+            const overflowMm = (cabinetCount * 900) - targetMm;
+
+            if (overflowMm > 0) {
+                widths[cabinetCount - 1] = Math.max(300, 900 - overflowMm);
+            }
+
+            return widths;
+        }
+
+        function formatCabinetWidths(widths) {
+            return widths.join('·');
         }
 
         function getEstimateWidth() {
@@ -1707,19 +1741,19 @@
                 jaResult.innerText = '';
                 regularPrice.innerHTML = '0<small>원</small>';
                 totalPrice.innerHTML = '0<small>원</small>';
-                updateModulePreview(0, config);
+                updateModulePreview([], config);
                 return;
             }
 
             const pricingUnitCount = Math.ceil(cmValue / 30);
-            const cabinetCount = getCabinetCount(cmValue);
+            const cabinetWidths = getCabinetWidths(cmValue);
             const price = pricingUnitCount * getUnitPrice(grade) + PRICES.configAddon[config];
             const benefitPrice = applySpecialBenefit(price);
 
-            jaResult.innerText = `${estimateWidth.label} ${cmValue}cm · 900장 ${cabinetCount}개 · ${FINISH_SUMMARY}`;
+            jaResult.innerText = `${estimateWidth.label} ${cmValue}cm · 장폭 ${formatCabinetWidths(cabinetWidths)} · ${FINISH_SUMMARY}`;
             regularPrice.innerHTML = `${price.toLocaleString()}<small>원</small>`;
             totalPrice.innerHTML = `${benefitPrice.toLocaleString()}<small>원</small>`;
-            updateModulePreview(cabinetCount, config);
+            updateModulePreview(cabinetWidths, config);
         }
 
         function goToKakao() {
