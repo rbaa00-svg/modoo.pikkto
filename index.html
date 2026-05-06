@@ -478,6 +478,93 @@
             pointer-events: auto;
         }
 
+        .photo-dialog-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 70;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            background: rgba(15, 23, 42, 0.52);
+            transition: opacity 0.2s ease;
+        }
+
+        .photo-dialog-bg.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .photo-dialog-card {
+            width: min(360px, 100%);
+            padding: 22px;
+            border: 1px solid rgba(229, 231, 235, 0.9);
+            border-radius: 24px;
+            background: #ffffff;
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.2);
+            transform: translateY(10px) scale(0.98);
+            transition: transform 0.2s ease;
+        }
+
+        .photo-dialog-bg.open .photo-dialog-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .photo-dialog-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 16px;
+            border-radius: 16px;
+            color: var(--blue);
+            background: var(--blue-soft);
+        }
+
+        .photo-dialog-card h2 {
+            margin: 0;
+            color: var(--ink);
+            font-size: 20px;
+            font-weight: 950;
+            line-height: 1.35;
+            word-break: keep-all;
+        }
+
+        .photo-dialog-card p {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 750;
+            line-height: 1.5;
+            word-break: keep-all;
+        }
+
+        .photo-dialog-actions {
+            display: grid;
+            grid-template-columns: 1fr 1.35fr;
+            gap: 9px;
+            margin-top: 20px;
+        }
+
+        .photo-dialog-actions button {
+            min-height: 48px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 950;
+        }
+
+        .photo-dialog-secondary {
+            color: #64748b;
+            background: #f1f5f9;
+        }
+
+        .photo-dialog-primary {
+            color: #ffffff;
+            background: var(--blue);
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
+        }
+
         .estimate-shell {
             position: fixed;
             inset: 0;
@@ -1493,7 +1580,7 @@
             사업자번호 880-01-03735
         </p>
         <p class="footer-line">전화 010-2617-3628</p>
-        <a class="footer-contact" href="https://open.kakao.com/o/gttYvDsi" target="_blank" rel="noopener noreferrer">문의 하기 카카오톡 연결하기</a>
+        <a class="footer-contact" href="https://open.kakao.com/o/gttYvDsi" onclick="event.preventDefault(); goToKakao()">문의 하기 카카오톡 연결하기</a>
         <nav class="footer-links" aria-label="정책 링크">
             <a href="#">이용약관</a>
             <a href="#">개인정보처리방침</a>
@@ -1502,6 +1589,23 @@
     </footer>
 
     <div id="modalOverlay" class="bottom-sheet-bg" onclick="closeModal()"></div>
+
+    <div id="photoDialogOverlay" class="photo-dialog-bg" aria-hidden="true" onclick="closePhotoDialog()">
+        <section class="photo-dialog-card" role="dialog" aria-modal="true" aria-labelledby="photoDialogTitle" onclick="event.stopPropagation()">
+            <div class="photo-dialog-icon" aria-hidden="true">
+                <svg width="23" height="23" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 8.5c0-1.1.9-2 2-2h2.1l1.2-1.6c.38-.5.97-.8 1.6-.8h2.2c.63 0 1.22.3 1.6.8l1.2 1.6H18c1.1 0 2 .9 2 2v8.5c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V8.5Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+                    <path d="M12 16a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z" stroke="currentColor" stroke-width="1.9"/>
+                </svg>
+            </div>
+            <h2 id="photoDialogTitle">설치할 위치의 사진을 준비하셨나요?</h2>
+            <p>사진이 있으면 상담이 더 빠르게 진행됩니다.</p>
+            <div class="photo-dialog-actions">
+                <button type="button" class="photo-dialog-secondary" onclick="confirmPhotoReady()">아니요</button>
+                <button type="button" id="photoDialogConfirm" class="photo-dialog-primary" onclick="confirmPhotoReady()">예</button>
+            </div>
+        </section>
+    </div>
 
     <div class="mobile-cta-wrap">
         <button onclick="openModal()" class="mobile-cta primary-cta">
@@ -1974,12 +2078,44 @@
             updateModulePreview(cabinetWidths, config);
         }
 
-        function goToKakao() {
+        function openPhotoDialog() {
+            const dialog = document.getElementById('photoDialogOverlay');
+            if (!dialog) {
+                window.location.assign(KAKAO_OPEN_CHAT_URL);
+                return;
+            }
+
+            dialog.classList.add('open');
+            dialog.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => document.getElementById('photoDialogConfirm')?.focus(), 80);
+        }
+
+        function closePhotoDialog() {
+            const dialog = document.getElementById('photoDialogOverlay');
+            if (!dialog) return;
+
+            dialog.classList.remove('open');
+            dialog.setAttribute('aria-hidden', 'true');
+
+            const estimateSheet = document.getElementById('estimateSheet');
+            if (!estimateSheet.classList.contains('open')) {
+                document.body.style.overflow = '';
+            }
+        }
+
+        function confirmPhotoReady() {
             window.location.assign(KAKAO_OPEN_CHAT_URL);
+        }
+
+        function goToKakao() {
+            openPhotoDialog();
         }
 
         window.openModal = openModal;
         window.closeModal = closeModal;
+        window.closePhotoDialog = closePhotoDialog;
+        window.confirmPhotoReady = confirmPhotoReady;
         window.calculatePrice = calculatePrice;
         window.goToKakao = goToKakao;
 
@@ -2008,6 +2144,14 @@
         window.addEventListener('pageshow', () => {
             resetEstimateScroll();
             setTimeout(resetEstimateScroll, 100);
+        });
+        window.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') return;
+
+            const dialog = document.getElementById('photoDialogOverlay');
+            if (dialog?.classList.contains('open')) {
+                closePhotoDialog();
+            }
         });
         mqDesktop.addEventListener('change', resetEstimateScroll);
     </script>
