@@ -22,6 +22,8 @@
             --radius: 18px;
             --shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
             --mobile-cta-space: 82px;
+            --page-max-width: 1180px;
+            --page-pad: clamp(16px, 3vw, 28px);
         }
 
         * {
@@ -87,14 +89,14 @@
         }
 
         .topbar-inner {
-            width: min(1180px, 100%);
+            width: min(var(--page-max-width), 100%);
             min-height: 68px;
             margin: 0 auto;
-            padding: 0 22px;
+            padding: 0 var(--page-pad);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 14px;
+            gap: clamp(10px, 1.4vw, 16px);
         }
 
         .brand {
@@ -152,11 +154,11 @@
         }
 
         .layout {
-            width: min(1180px, 100%);
+            width: min(var(--page-max-width), 100%);
             margin: 0 auto;
-            padding: 24px 22px 116px;
+            padding: clamp(18px, 3dvh, 24px) var(--page-pad) 116px;
             display: grid;
-            gap: 22px;
+            gap: clamp(16px, 2vw, 24px);
         }
 
         .content-column {
@@ -261,7 +263,7 @@
 
         .product-grid {
             display: flex;
-            gap: 16px;
+            gap: clamp(12px, 1.4vw, 16px);
             width: 100%;
             margin: 0;
             padding: 0 2px 10px 0;
@@ -273,11 +275,11 @@
 
         .product-carousel-stack {
             display: grid;
-            gap: 14px;
+            gap: clamp(12px, 1.2vw, 16px);
         }
 
         .product-card {
-            flex: 0 0 clamp(240px, 42vw, 310px);
+            flex: 0 0 clamp(232px, 52vw, 310px);
             border: 1px solid rgba(229, 231, 235, 0.9);
             border-radius: 22px;
             background: var(--surface);
@@ -320,7 +322,7 @@
         }
 
         .product-body {
-            padding: 15px;
+            padding: clamp(13px, 1.4vw, 15px);
         }
 
         .product-badge {
@@ -410,9 +412,9 @@
         }
 
         .site-footer {
-            width: min(1120px, 100%);
+            width: min(calc(var(--page-max-width) - 60px), 100%);
             margin: 4px auto 0;
-            padding: 28px 24px 34px;
+            padding: 28px var(--page-pad) 34px;
             border-top: 1px solid #e5e7eb;
             color: #64748b;
             background: #ffffff;
@@ -1000,12 +1002,23 @@
         }
 
         @media (min-width: 960px) {
+            .topbar-inner,
+            .layout,
+            .site-footer {
+                --page-max-width: 1320px;
+                width: min(var(--page-max-width), calc(100% - clamp(24px, 4vw, 56px)));
+            }
+
             .layout {
-                --desktop-section-height: min(760px, calc(100dvh - 118px));
-                grid-template-columns: minmax(0, 1fr) 390px;
+                --desktop-section-height: clamp(560px, calc(100dvh - 118px), 800px);
+                --estimate-column-width: clamp(330px, 30vw, 430px);
+                --desktop-card-width: clamp(220px, 19vw, 292px);
+                grid-template-columns: minmax(0, 1fr) minmax(330px, var(--estimate-column-width));
                 align-items: stretch;
-                padding-top: 30px;
-                padding-bottom: 44px;
+                padding-top: clamp(20px, 3dvh, 34px);
+                padding-bottom: clamp(28px, 4dvh, 48px);
+                padding-inline: clamp(18px, 2vw, 30px);
+                gap: clamp(18px, 2.1vw, 30px);
             }
 
             .content-column,
@@ -1031,6 +1044,10 @@
                 min-height: 0;
                 padding-bottom: 0;
                 align-items: stretch;
+            }
+
+            .product-card {
+                flex-basis: var(--desktop-card-width);
             }
 
             .product-card button {
@@ -1081,11 +1098,114 @@
             }
 
             .estimate-scroll {
-                padding: 22px 22px 16px;
+                padding: clamp(18px, 1.8vw, 24px) clamp(18px, 1.8vw, 24px) 16px;
             }
 
             .estimate-footer {
-                padding-bottom: 22px;
+                padding: 17px clamp(18px, 1.8vw, 24px) clamp(18px, 2dvh, 24px);
+            }
+        }
+
+        @media (min-width: 960px) and (max-width: 1120px) {
+            .layout {
+                --estimate-column-width: clamp(320px, 34vw, 360px);
+                --desktop-card-width: clamp(210px, 24vw, 250px);
+                grid-template-columns: minmax(0, 1fr) minmax(320px, var(--estimate-column-width));
+            }
+
+            .product-body h3 {
+                font-size: 15px;
+            }
+
+            .product-meta strong {
+                font-size: 15px;
+            }
+        }
+
+        @media (min-width: 960px) and (max-height: 740px) {
+            .layout {
+                --desktop-section-height: clamp(520px, calc(100dvh - 96px), 650px);
+                padding-top: 18px;
+                padding-bottom: 24px;
+            }
+
+            .product-image {
+                aspect-ratio: 16 / 9;
+            }
+
+            .product-body {
+                padding: 12px;
+            }
+
+            .product-badge {
+                margin-bottom: 7px;
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            .product-body h3 {
+                font-size: 15px;
+            }
+
+            .product-site,
+            .product-composition,
+            .product-meta span {
+                font-size: 12px;
+            }
+
+            .product-meta {
+                margin-top: 8px;
+                padding-top: 8px;
+            }
+
+            .estimate-head {
+                padding-top: 18px;
+                padding-bottom: 12px;
+            }
+
+            .estimate-title-row h2 {
+                font-size: 20px;
+            }
+
+            .estimate-scroll {
+                padding-top: 16px;
+                padding-bottom: 12px;
+            }
+
+            .field-group + .field-group {
+                margin-top: 18px;
+            }
+
+            .width-input {
+                min-height: 56px;
+                font-size: 22px;
+            }
+
+            .choice-ui {
+                min-height: 48px;
+            }
+
+            .module-panel {
+                margin-bottom: 12px;
+                padding: 14px;
+            }
+
+            .module-preview {
+                aspect-ratio: 16 / 7.5;
+            }
+
+            .config-ui {
+                min-height: 70px;
+                padding: 12px;
+            }
+
+            .config-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .estimate-footer {
+                padding-top: 14px;
             }
         }
 
@@ -1158,6 +1278,17 @@
 
             .site-footer {
                 padding: 24px 18px 112px;
+            }
+        }
+
+        @media (min-width: 640px) and (max-width: 959px) {
+            .layout {
+                width: min(760px, 100%);
+                padding-inline: clamp(18px, 4vw, 30px);
+            }
+
+            .product-card {
+                flex-basis: clamp(260px, 42vw, 300px);
             }
         }
 
