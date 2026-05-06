@@ -356,9 +356,9 @@
         .product-site {
             margin: 7px 0 0;
             overflow: hidden;
-            color: #64748b;
+            color: #334155;
             font-size: 13px;
-            font-weight: 800;
+            font-weight: 850;
             line-height: 1.35;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -367,9 +367,9 @@
         .product-composition {
             margin: 5px 0 0;
             overflow: hidden;
-            color: #475569;
+            color: #0f172a;
             font-size: 12px;
-            font-weight: 850;
+            font-weight: 900;
             line-height: 1.35;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -1761,16 +1761,34 @@
             return '';
         }
 
+        function firstNumber(...values) {
+            for (const value of values) {
+                if (value === null || value === undefined || value === '') continue;
+                const normalized = String(value).replace(/[^0-9.-]/g, '');
+                const number = Number(normalized);
+                if (Number.isFinite(number) && number > 0) return number;
+            }
+            return 0;
+        }
+
+        function normalizeCategory(value) {
+            const text = String(value ?? '').trim();
+            if (CATEGORY_LABELS[text]) return text;
+            if (text.includes('프리미엄')) return 'premium';
+            if (text.includes('슬라이딩')) return 'sliding';
+            return 'basic';
+        }
+
         function normalizeProduct(product = {}) {
-            const category = CATEGORY_LABELS[product.category] ? product.category : CATEGORY_LABELS[product.grade] ? product.grade : 'basic';
+            const category = normalizeCategory(firstText(product.category, product.grade, product['분류'], product['카테고리'], product['종류']));
             const categoryLabel = CATEGORY_LABELS[category] || '옷장';
-            const widthCm = Math.max(1, Number(product.widthCm || product.width || product.sizeCm || product.cm) || 150);
-            const price = Math.max(0, Number(product.price || product.estimate || product.quote || product.cost) || 0);
+            const widthCm = Math.max(1, firstNumber(product.widthCm, product.width, product.sizeCm, product.cm, product['기준cm'], product['기준 cm'], product['가로길이'], product['가로 길이'], product['폭'], product['길이']) || 150);
+            const price = Math.max(0, firstNumber(product.price, product.estimate, product.quote, product.cost, product['견적'], product['예상가'], product['가격'], product['금액']));
             const moduleCount = Math.max(1, Math.ceil(widthCm / 30));
-            const name = firstText(product.name, product.modelName, product.moduleName, product.model, product.title, `${categoryLabel} ${widthCm}cm`);
-            const site = firstText(product.site, product.siteName, product.location, product.locationName, product.fieldName, product.projectSite, product.scene, product.address, '현장명 준비 중');
-            const composition = firstText(product.composition, product.moduleComposition, product.modules, product.structure, product.config, product.configuration, '장 구성 준비 중');
-            const image = firstText(product.image, product.imageUrl, product.thumbnail, product.thumbnailImage, product.photo, product.photoUrl);
+            const name = firstText(product.name, product.modelName, product.moduleName, product.model, product.title, product['모델명'], product['모듈명'], product['상품명'], product['제품명'], product['이름'], `${categoryLabel} ${widthCm}cm`);
+            const site = firstText(product.site, product.siteName, product.location, product.locationName, product.fieldName, product.projectSite, product.scene, product.address, product['현장명'], product['현장'], product['설치현장'], product['설치 현장'], product['위치'], product['주소'], '현장명 준비 중');
+            const composition = firstText(product.composition, product.moduleComposition, product.modules, product.structure, product.config, product.configuration, product['장구성'], product['장 구성'], product['모듈구성'], product['모듈 구성'], product['내부구성'], product['내부 구성'], product['구성'], '장 구성 준비 중');
+            const image = firstText(product.image, product.imageUrl, product.thumbnail, product.thumbnailImage, product.photo, product.photoUrl, product['썸네일이미지'], product['썸네일 이미지'], product['사진'], product['이미지'], product['사진URL'], product['사진 URL'], product['이미지URL'], product['이미지 URL']);
 
             return {
                 id: product.id || `item-${Date.now()}-${Math.random().toString(16).slice(2)}`,
@@ -1780,7 +1798,7 @@
                 composition,
                 widthCm,
                 price,
-                unitPrice: Math.max(0, Number(product.unitPrice || product.pricePerUnit) || Math.ceil(price / moduleCount)),
+                unitPrice: Math.max(0, firstNumber(product.unitPrice, product.pricePerUnit, product['계산단가'], product['단가']) || Math.ceil(price / moduleCount)),
                 image
             };
         }
