@@ -412,9 +412,9 @@
         }
 
         .site-footer {
-            width: min(calc(var(--page-max-width) - 60px), 100%);
-            margin: 4px auto 0;
-            padding: 28px var(--page-pad) 34px;
+            width: 100%;
+            margin: 4px 0 0;
+            padding: 28px max(var(--page-pad), calc((100% - 1120px) / 2 + var(--page-pad))) 34px;
             border-top: 1px solid #e5e7eb;
             color: #64748b;
             background: #ffffff;
@@ -1098,8 +1098,7 @@
 
         @media (min-width: 960px) {
             .topbar-inner,
-            .layout,
-            .site-footer {
+            .layout {
                 --page-max-width: 1320px;
                 width: min(var(--page-max-width), calc(100% - clamp(24px, 4vw, 56px)));
             }
@@ -1599,7 +1598,7 @@
     </main>
 
     <footer class="site-footer">
-        <p class="footer-brand">piKkto</p>
+        <p class="footer-brand">modoo.pikkto</p>
         <p class="footer-line">
             대표 정수용
             <span class="footer-divider">|</span>
