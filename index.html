@@ -1205,7 +1205,7 @@
 
                 <div class="estimate-footer">
                     <div class="total-row">
-                        <span>예상가</span>
+                        <span>정책 특별 혜택가</span>
                         <p id="totalPrice" class="total-price">0<small>원</small></p>
                     </div>
                     <button onclick="goToKakao()" class="kakao-button">
@@ -1332,6 +1332,7 @@
         };
         const FINISH_SUMMARY = '마감재 4개(좌1·우1·상단2)';
         const KAKAO_OPEN_CHAT_URL = 'https://open.kakao.com/o/gttYvDsi';
+        const SPECIAL_BENEFIT_RATE = 0.07;
         let catalog = loadCatalog();
         let activeWidthPreset = 'master';
         let catalogRotateTimers = [];
@@ -1340,6 +1341,10 @@
 
         function formatPrice(value) {
             return `${Number(value || 0).toLocaleString()}원`;
+        }
+
+        function applySpecialBenefit(price) {
+            return Math.round(Number(price || 0) * (1 - SPECIAL_BENEFIT_RATE));
         }
 
         function escapeHtml(value) {
@@ -1627,9 +1632,10 @@
             const pricingUnitCount = Math.ceil(cmValue / 30);
             const cabinetCount = getCabinetCount(cmValue);
             const price = pricingUnitCount * getUnitPrice(grade) + PRICES.configAddon[config];
+            const benefitPrice = applySpecialBenefit(price);
 
             jaResult.innerText = `${estimateWidth.label} ${cmValue}cm · 900장 ${cabinetCount}개 · ${FINISH_SUMMARY}`;
-            totalPrice.innerHTML = `${price.toLocaleString()}<small>원</small>`;
+            totalPrice.innerHTML = `${benefitPrice.toLocaleString()}<small>원</small>`;
             updateModulePreview(cabinetCount, config);
         }
 
