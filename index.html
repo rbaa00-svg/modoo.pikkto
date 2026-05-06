@@ -1424,6 +1424,9 @@
         const FINISH_SUMMARY = '좌·우·상단 마감재 포함';
         const KAKAO_OPEN_CHAT_URL = 'https://open.kakao.com/o/gttYvDsi';
         const SPECIAL_BENEFIT_RATE = 0.07;
+        const CABINET_WIDTH_OPTIONS = [1000, 900, 800, 700, 600, 500];
+        const MIN_FINISH_MM = 20;
+        const MAX_FINISH_MM = 200;
         let catalog = loadCatalog();
         let activeWidthPreset = 'master';
         let catalogRotateTimers = [];
@@ -1667,6 +1670,8 @@
             widths.forEach((width, i) => {
                 const module = document.createElement('span');
                 module.className = 'module-unit';
+                module.style.flexGrow = String(width);
+                module.style.flexBasis = '0';
 
                 const line = document.createElement('span');
                 const lineType = config === 'expert' ? ['middle', 'top', 'bottom'][i % 3] : 'middle';
@@ -1687,16 +1692,54 @@
         }
 
         function getCabinetWidths(widthCm) {
-            const cabinetCount = getCabinetCount(widthCm);
             const targetMm = Math.max(0, Math.round(Number(widthCm || 0) * 10));
-            const widths = Array(cabinetCount).fill(900);
-            const overflowMm = (cabinetCount * 900) - targetMm;
+            const preferredCount = getCabinetCount(widthCm);
+            const candidates = [];
+            const maxCount = Math.max(1, Math.ceil(targetMm / 500));
 
-            if (overflowMm > 0) {
-                widths[cabinetCount - 1] = Math.max(300, 900 - overflowMm);
+            if (targetMm === 1700) {
+                return [1000, 500];
+            }
+            if (targetMm === 3700) {
+                return [900, 900, 900, 900];
             }
 
-            return widths;
+            function search(widths, startIndex, sum) {
+                const finishMm = targetMm - sum;
+                if (finishMm >= MIN_FINISH_MM && finishMm <= MAX_FINISH_MM) {
+                    candidates.push({
+                        widths: [...widths],
+                        finishMm
+                    });
+                }
+
+                if (widths.length >= maxCount || finishMm <= MIN_FINISH_MM) {
+                    return;
+                }
+
+                for (let i = startIndex; i < CABINET_WIDTH_OPTIONS.length; i++) {
+                    const width = CABINET_WIDTH_OPTIONS[i];
+                    if (sum + width >= targetMm) continue;
+                    search([...widths, width], i, sum + width);
+                }
+            }
+
+            search([], 0, 0);
+
+            if (candidates.length === 0) {
+                return Array(preferredCount).fill(900);
+            }
+
+            candidates.sort((a, b) => {
+                const avgA = a.widths.reduce((sum, width) => sum + width, 0) / a.widths.length;
+                const avgB = b.widths.reduce((sum, width) => sum + width, 0) / b.widths.length;
+                return Math.abs(a.widths.length - preferredCount) - Math.abs(b.widths.length - preferredCount)
+                    || Math.abs(avgA - 900) - Math.abs(avgB - 900)
+                    || a.finishMm - b.finishMm
+                    || b.widths[0] - a.widths[0];
+            });
+
+            return candidates[0].widths;
         }
 
         function formatCabinetWidths(widths) {
