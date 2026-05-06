@@ -647,6 +647,7 @@
 
         .estimate-scroll {
             flex: 1;
+            min-height: 0;
             overflow-y: auto;
             overflow-anchor: none;
             padding: 22px;
@@ -1438,6 +1439,7 @@
 
             .estimate-card {
                 max-width: 560px;
+                max-height: calc(100dvh - 14px);
                 margin: 0 auto;
             }
 
@@ -2025,26 +2027,49 @@
             catalogRotateTimers.push(state);
         }
 
+        function getEstimateScrollState() {
+            const scrollArea = document.querySelector('.estimate-scroll');
+            return {
+                scrollArea,
+                scrollTop: scrollArea?.scrollTop ?? 0,
+                pageX: window.scrollX,
+                pageY: window.scrollY
+            };
+        }
+
+        function restoreEstimateScrollState(state) {
+            if (!state) return;
+            if (state.scrollArea) state.scrollArea.scrollTop = state.scrollTop;
+            if (mqDesktop.matches) window.scrollTo(state.pageX, state.pageY);
+        }
+
+        function scheduleEstimateScrollRestore(state) {
+            restoreEstimateScrollState(state);
+            requestAnimationFrame(() => {
+                restoreEstimateScrollState(state);
+                requestAnimationFrame(() => restoreEstimateScrollState(state));
+            });
+            setTimeout(() => restoreEstimateScrollState(state), 0);
+            setTimeout(() => restoreEstimateScrollState(state), 80);
+            setTimeout(() => restoreEstimateScrollState(state), 180);
+        }
+
         function resetEstimateScroll() {
             const scrollArea = document.querySelector('.estimate-scroll');
             if (scrollArea) scrollArea.scrollTop = 0;
         }
 
         function keepEstimateScrollStable(callback) {
-            const scrollArea = document.querySelector('.estimate-scroll');
-            const scrollTop = scrollArea?.scrollTop ?? 0;
-            const pageX = window.scrollX;
-            const pageY = window.scrollY;
+            const state = getEstimateScrollState();
 
             callback();
 
-            if (scrollArea) scrollArea.scrollTop = scrollTop;
-            if (mqDesktop.matches) window.scrollTo(pageX, pageY);
+            const activeElement = document.activeElement;
+            if (activeElement?.matches?.('input[type="radio"][name="grade"], input[type="radio"][name="config"]')) {
+                activeElement.blur();
+            }
 
-            requestAnimationFrame(() => {
-                if (scrollArea) scrollArea.scrollTop = scrollTop;
-                if (mqDesktop.matches) window.scrollTo(pageX, pageY);
-            });
+            scheduleEstimateScrollRestore(state);
         }
 
         function openModal(defaultGrade = null) {
@@ -2281,6 +2306,24 @@
         window.confirmPhotoReady = confirmPhotoReady;
         window.calculatePrice = calculatePrice;
         window.goToKakao = goToKakao;
+
+        document.querySelectorAll('.choice-card, .config-card').forEach((card) => {
+            const input = card.querySelector('input[type="radio"]');
+            const preserveEstimatePosition = () => {
+                scheduleEstimateScrollRestore(getEstimateScrollState());
+            };
+            card.addEventListener('pointerdown', preserveEstimatePosition);
+            card.addEventListener('click', (event) => {
+                event.preventDefault();
+                const state = getEstimateScrollState();
+                if (input && !input.checked) {
+                    input.checked = true;
+                    calculatePrice();
+                }
+                scheduleEstimateScrollRestore(state);
+            });
+            card.addEventListener('focusin', preserveEstimatePosition);
+        });
 
         document.getElementById('widthPresets').addEventListener('click', (event) => {
             const button = event.target.closest('button[data-preset]');
