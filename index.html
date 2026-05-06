@@ -855,23 +855,78 @@
 
         .total-row {
             display: flex;
-            align-items: end;
+            align-items: flex-end;
             justify-content: space-between;
             gap: 16px;
             margin-bottom: 14px;
         }
 
-        .total-row span {
+        .price-label-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .price-label-stack span {
             color: #8a94a6;
             font-size: 13px;
             font-weight: 750;
             line-height: 1.3;
         }
 
-        .total-price {
-            margin: 0;
+        .price-label-stack strong {
             color: var(--ink);
-            font-size: clamp(27px, 5vw, 36px);
+            font-size: 14px;
+            font-weight: 900;
+            line-height: 1.25;
+            word-break: keep-all;
+        }
+
+        .price-stack {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .regular-price {
+            margin: 0;
+            color: #a5adba;
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1;
+            text-align: right;
+            text-decoration: line-through;
+            white-space: nowrap;
+        }
+
+        .regular-price small {
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .benefit-price-row {
+            margin: 0;
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-end;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .benefit-rate {
+            color: #e60012;
+            font-size: 17px;
+            font-weight: 950;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .total-price {
+            color: var(--ink);
+            font-size: clamp(27px, 5vw, 35px);
             font-weight: 950;
             line-height: 1;
             text-align: right;
@@ -1078,6 +1133,21 @@
                 padding-left: 18px;
                 padding-right: 18px;
             }
+
+            .total-row {
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .total-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .price-stack {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -1205,8 +1275,17 @@
 
                 <div class="estimate-footer">
                     <div class="total-row">
-                        <span>정책 특별 혜택가</span>
-                        <p id="totalPrice" class="total-price">0<small>원</small></p>
+                        <div class="price-label-stack">
+                            <span>정가</span>
+                            <strong>정책 특별 혜택가</strong>
+                        </div>
+                        <div class="price-stack" aria-live="polite">
+                            <p id="regularPrice" class="regular-price">0<small>원</small></p>
+                            <p class="benefit-price-row">
+                                <span class="benefit-rate">7%</span>
+                                <span id="totalPrice" class="total-price">0<small>원</small></span>
+                            </p>
+                        </div>
                     </div>
                     <button onclick="goToKakao()" class="kakao-button">
                         <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor" aria-hidden="true">
@@ -1617,6 +1696,7 @@
             const estimateWidth = getEstimateWidth();
             const cmValue = estimateWidth.width;
             const jaResult = document.getElementById('jaResult');
+            const regularPrice = document.getElementById('regularPrice');
             const totalPrice = document.getElementById('totalPrice');
             const grade = document.querySelector('input[name="grade"]:checked').value;
             const config = document.querySelector('input[name="config"]:checked').value;
@@ -1624,6 +1704,7 @@
 
             if (!cmValue || cmValue <= 0) {
                 jaResult.innerText = '';
+                regularPrice.innerHTML = '0<small>원</small>';
                 totalPrice.innerHTML = '0<small>원</small>';
                 updateModulePreview(0, config);
                 return;
@@ -1635,6 +1716,7 @@
             const benefitPrice = applySpecialBenefit(price);
 
             jaResult.innerText = `${estimateWidth.label} ${cmValue}cm · 900장 ${cabinetCount}개 · ${FINISH_SUMMARY}`;
+            regularPrice.innerHTML = `${price.toLocaleString()}<small>원</small>`;
             totalPrice.innerHTML = `${benefitPrice.toLocaleString()}<small>원</small>`;
             updateModulePreview(cabinetCount, config);
         }
