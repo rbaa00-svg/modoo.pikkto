@@ -1634,11 +1634,7 @@
         }
 
         function goToKakao() {
-            const estimateWidth = getEstimateWidth();
-            const finalPrice = document.getElementById('totalPrice').innerText;
-            if (confirm(`${estimateWidth.label} ${estimateWidth.width}cm 기준 예상 견적은 ${finalPrice}입니다.\n전문 상담사와 1:1 채팅을 연결할까요?`)) {
-                window.open(KAKAO_OPEN_CHAT_URL, '_blank', 'noopener,noreferrer');
-            }
+            window.location.assign(KAKAO_OPEN_CHAT_URL);
         }
 
         window.openModal = openModal;
