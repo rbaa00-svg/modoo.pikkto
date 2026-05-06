@@ -1001,10 +1001,53 @@
 
         @media (min-width: 960px) {
             .layout {
+                --desktop-section-height: min(760px, calc(100dvh - 118px));
                 grid-template-columns: minmax(0, 1fr) 390px;
-                align-items: start;
+                align-items: stretch;
                 padding-top: 30px;
                 padding-bottom: 44px;
+            }
+
+            .content-column,
+            #catalogSections,
+            .section-block {
+                min-height: var(--desktop-section-height);
+            }
+
+            .section-block {
+                margin-top: 0;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .product-carousel-stack {
+                flex: 1;
+                grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+                min-height: 0;
+                overflow: hidden;
+            }
+
+            .product-grid {
+                min-height: 0;
+                padding-bottom: 0;
+                align-items: stretch;
+            }
+
+            .product-card button {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .product-body {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .product-meta {
+                margin-top: auto;
+                padding-top: 12px;
             }
 
             .estimate-shell {
@@ -1026,7 +1069,8 @@
 
             .estimate-card,
             .estimate-shell.open .estimate-card {
-                max-height: calc(100dvh - 118px);
+                height: var(--desktop-section-height);
+                max-height: var(--desktop-section-height);
                 border: 1px solid rgba(229, 231, 235, 0.88);
                 border-radius: 28px;
                 transform: none;
