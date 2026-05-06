@@ -279,6 +279,12 @@
         }
 
         .product-card {
+            --card-pad: clamp(12px, 1.25vw, 15px);
+            --card-badge-gap: 9px;
+            --card-title-size: clamp(14px, 1.18vw, 16px);
+            --card-site-size: clamp(11.5px, 0.95vw, 13px);
+            --card-config-size: clamp(11px, 0.9vw, 12px);
+            --card-price-size: clamp(15px, 1.45vw, 17px);
             flex: 0 0 clamp(232px, 52vw, 310px);
             border: 1px solid rgba(229, 231, 235, 0.9);
             border-radius: 22px;
@@ -322,12 +328,12 @@
         }
 
         .product-body {
-            padding: clamp(13px, 1.4vw, 15px);
+            padding: var(--card-pad);
         }
 
         .product-badge {
             width: fit-content;
-            margin-bottom: 10px;
+            margin-bottom: var(--card-badge-gap);
             padding: 5px 9px;
             border-radius: 999px;
             color: var(--blue);
@@ -348,16 +354,19 @@
 
         .product-body h3 {
             margin: 0;
-            font-size: 16px;
+            overflow: hidden;
+            font-size: var(--card-title-size);
             font-weight: 900;
             line-height: 1.28;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .product-site {
-            margin: 7px 0 0;
+            margin: clamp(4px, 0.6vw, 7px) 0 0;
             overflow: hidden;
             color: #334155;
-            font-size: 13px;
+            font-size: var(--card-site-size);
             font-weight: 850;
             line-height: 1.35;
             text-overflow: ellipsis;
@@ -365,10 +374,10 @@
         }
 
         .product-composition {
-            margin: 5px 0 0;
+            margin: clamp(3px, 0.45vw, 5px) 0 0;
             overflow: hidden;
             color: #0f172a;
-            font-size: 12px;
+            font-size: var(--card-config-size);
             font-weight: 900;
             line-height: 1.35;
             text-overflow: ellipsis;
@@ -392,7 +401,7 @@
 
         .product-meta strong {
             color: var(--blue);
-            font-size: 17px;
+            font-size: var(--card-price-size);
             font-weight: 950;
             white-space: nowrap;
         }
@@ -1145,6 +1154,12 @@
             }
 
             .product-card {
+                --card-pad: clamp(10px, 1.1vw, 13px);
+                --card-badge-gap: 7px;
+                --card-title-size: clamp(14px, 1.05vw, 15px);
+                --card-site-size: clamp(11px, 0.86vw, 12px);
+                --card-config-size: clamp(10.5px, 0.82vw, 11.5px);
+                --card-price-size: clamp(14px, 1.3vw, 16px);
                 flex-basis: var(--desktop-card-width);
                 height: 100%;
                 min-height: 0;
@@ -1152,7 +1167,8 @@
 
             .product-image {
                 flex: 0 0 auto;
-                aspect-ratio: 16 / 9;
+                height: clamp(118px, 20dvh, 178px);
+                aspect-ratio: auto;
             }
 
             .product-card button {
@@ -1171,7 +1187,7 @@
 
             .product-meta {
                 margin-top: auto;
-                padding-top: 12px;
+                padding-top: clamp(7px, 1dvh, 12px);
             }
 
             .estimate-shell {
@@ -1237,32 +1253,23 @@
             }
 
             .product-image {
-                aspect-ratio: 16 / 9;
+                height: clamp(92px, 17dvh, 128px);
+                aspect-ratio: auto;
             }
 
             .product-body {
-                padding: 12px;
+                padding: 10px 11px;
             }
 
             .product-badge {
-                margin-bottom: 7px;
+                margin-bottom: 6px;
                 padding: 4px 8px;
                 font-size: 10px;
             }
 
-            .product-body h3 {
-                font-size: 15px;
-            }
-
-            .product-site,
-            .product-composition,
-            .product-meta span {
-                font-size: 12px;
-            }
-
             .product-meta {
-                margin-top: 8px;
-                padding-top: 8px;
+                margin-top: auto;
+                padding-top: 6px;
             }
 
             .estimate-head {
