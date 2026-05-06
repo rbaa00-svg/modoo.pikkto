@@ -673,6 +673,21 @@
 
         .input-wrap {
             position: relative;
+            display: block;
+        }
+
+        .dimension-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .dimension-label {
+            display: block;
+            margin: 0 0 7px;
+            color: #667085;
+            font-size: 12px;
+            font-weight: 900;
         }
 
         .width-input {
@@ -703,6 +718,18 @@
             font-size: 17px;
             font-weight: 900;
             transform: translateY(-50%);
+        }
+
+        .dimension-grid .width-input {
+            min-height: 60px;
+            padding-right: 42px;
+            padding-left: 14px;
+            font-size: clamp(18px, 4.8vw, 23px);
+        }
+
+        .dimension-grid .unit-label {
+            right: 14px;
+            font-size: 14px;
         }
 
         .result-line {
@@ -1299,6 +1326,18 @@
                 font-size: 22px;
             }
 
+            .dimension-grid .width-input {
+                min-height: 52px;
+                padding-right: 38px;
+                padding-left: 12px;
+                font-size: 18px;
+            }
+
+            .dimension-grid .unit-label {
+                right: 12px;
+                font-size: 13px;
+            }
+
             .choice-ui {
                 min-height: 48px;
             }
@@ -1439,6 +1478,10 @@
                 padding-right: 18px;
             }
 
+            .dimension-grid {
+                gap: 7px;
+            }
+
             .total-row {
                 align-items: stretch;
             }
@@ -1497,13 +1540,25 @@
 
                 <div class="estimate-scroll hide-scroll">
                     <div class="field-group">
-                        <label class="field-label" for="widthInput">
+                        <p class="field-label">
                             <span class="step-dot">1</span>
-                            가로 길이
-                        </label>
-                        <div class="input-wrap">
-                            <input class="width-input" type="number" id="widthInput" inputmode="numeric" min="1" placeholder="예: 360" oninput="calculatePrice()">
-                            <span class="unit-label">cm</span>
+                            설치 길이
+                        </p>
+                        <div class="dimension-grid">
+                            <label class="dimension-field" for="widthInput">
+                                <span class="dimension-label">가로 길이</span>
+                                <span class="input-wrap">
+                                    <input class="width-input" type="number" id="widthInput" inputmode="numeric" min="1" placeholder="예: 360" oninput="calculatePrice()">
+                                    <span class="unit-label">cm</span>
+                                </span>
+                            </label>
+                            <label class="dimension-field" for="heightInput">
+                                <span class="dimension-label">세로 길이</span>
+                                <span class="input-wrap">
+                                    <input class="width-input" type="number" id="heightInput" inputmode="numeric" min="1" placeholder="예: 240" oninput="calculatePrice()">
+                                    <span class="unit-label">cm</span>
+                                </span>
+                            </label>
                         </div>
                         <div class="preset-grid" id="widthPresets" aria-label="가로 길이 예시">
                             <button class="preset-button" type="button" data-preset="child">자녀방 <strong>170cm</strong></button>
@@ -1733,6 +1788,7 @@
         const FINISH_SUMMARY = '좌·우·상단 마감재 포함';
         const KAKAO_OPEN_CHAT_URL = 'https://open.kakao.com/o/gttYvDsi';
         const SPECIAL_BENEFIT_RATE = 0.07;
+        const DEFAULT_HEIGHT_CM = 240;
         const CABINET_WIDTH_OPTIONS = [1000, 900, 800, 700, 600, 500];
         const MODULE_PREVIEW_MAX_MM = 3700;
         const MIN_FINISH_MM = 20;
@@ -2130,6 +2186,12 @@
             };
         }
 
+        function getEstimateHeight() {
+            const heightInput = document.getElementById('heightInput');
+            const customHeight = Number(heightInput?.value);
+            return customHeight > 0 ? customHeight : DEFAULT_HEIGHT_CM;
+        }
+
         function syncWidthPresets() {
             const hasCustomWidth = Number(document.getElementById('widthInput').value) > 0;
             document.querySelectorAll('.preset-button').forEach((button) => {
@@ -2141,6 +2203,7 @@
             keepEstimateScrollStable(() => {
                 const estimateWidth = getEstimateWidth();
                 const cmValue = estimateWidth.width;
+                const heightValue = getEstimateHeight();
                 const jaResult = document.getElementById('jaResult');
                 const regularPrice = document.getElementById('regularPrice');
                 const totalPrice = document.getElementById('totalPrice');
@@ -2161,7 +2224,7 @@
                 const price = pricingUnitCount * getUnitPrice(grade) + PRICES.configAddon[config];
                 const benefitPrice = applySpecialBenefit(price);
 
-                jaResult.innerText = `${estimateWidth.label} ${cmValue}cm · 장폭 ${formatCabinetWidths(cabinetWidths)} · ${FINISH_SUMMARY}`;
+                jaResult.innerText = `${estimateWidth.label} 가로 ${cmValue}cm · 세로 ${heightValue}cm · 장폭 ${formatCabinetWidths(cabinetWidths)} · ${FINISH_SUMMARY}`;
                 regularPrice.innerHTML = `${price.toLocaleString()}<small>원</small>`;
                 totalPrice.innerHTML = `${benefitPrice.toLocaleString()}<small>원</small>`;
                 updateModulePreview(cabinetWidths, config, cmValue);
