@@ -423,13 +423,19 @@
         .site-footer {
             width: 100%;
             margin: 4px 0 0;
-            padding: 28px var(--page-pad) 34px;
+            padding: 0;
             border-top: 1px solid #e5e7eb;
             color: #64748b;
             background: #ffffff;
             font-size: 12px;
             line-height: 1.75;
             text-align: left;
+        }
+
+        .site-footer-inner {
+            width: min(var(--page-max-width), 100%);
+            margin: 0 auto;
+            padding: 28px var(--page-pad) 34px;
         }
 
         .footer-brand {
@@ -1134,7 +1140,8 @@
 
         @media (min-width: 960px) {
             .topbar-inner,
-            .layout {
+            .layout,
+            .site-footer-inner {
                 --page-max-width: 1320px;
                 width: min(var(--page-max-width), calc(100% - clamp(24px, 4vw, 56px)));
             }
@@ -1434,7 +1441,7 @@
                 margin: 0 auto;
             }
 
-            .site-footer {
+            .site-footer-inner {
                 padding: 24px 18px 112px;
             }
         }
@@ -1660,19 +1667,21 @@
     </main>
 
     <footer class="site-footer">
-        <p class="footer-brand">modoo.pikkto</p>
-        <p class="footer-line">
-            대표 정수용
-            <span class="footer-divider">|</span>
-            사업자번호 880-01-03735
-        </p>
-        <p class="footer-line">전화 010-2617-3628</p>
-        <a class="footer-contact" href="https://open.kakao.com/o/gttYvDsi" onclick="event.preventDefault(); goToKakao()">문의 하기 카카오톡 연결하기</a>
-        <nav class="footer-links" aria-label="정책 링크">
-            <a href="#">이용약관</a>
-            <a href="#">개인정보처리방침</a>
-            <a href="#">메시지 연동 이용약관</a>
-        </nav>
+        <div class="site-footer-inner">
+            <p class="footer-brand">modoo.pikkto</p>
+            <p class="footer-line">
+                대표 정수용
+                <span class="footer-divider">|</span>
+                사업자번호 880-01-03735
+            </p>
+            <p class="footer-line">전화 010-2617-3628</p>
+            <a class="footer-contact" href="https://open.kakao.com/o/gttYvDsi" onclick="event.preventDefault(); goToKakao()">문의 하기 카카오톡 연결하기</a>
+            <nav class="footer-links" aria-label="정책 링크">
+                <a href="#">이용약관</a>
+                <a href="#">개인정보처리방침</a>
+                <a href="#">메시지 연동 이용약관</a>
+            </nav>
+        </div>
     </footer>
 
     <div id="modalOverlay" class="bottom-sheet-bg" onclick="closeModal()"></div>
