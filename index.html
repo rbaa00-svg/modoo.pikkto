@@ -641,6 +641,7 @@
         .estimate-scroll {
             flex: 1;
             overflow-y: auto;
+            overflow-anchor: none;
             padding: 22px;
         }
 
@@ -793,6 +794,7 @@
             border: 1px solid #e5e7eb;
             background: #f8fafc;
             box-shadow: none;
+            overflow-anchor: none;
         }
 
         .module-panel p {
@@ -814,6 +816,8 @@
             align-items: stretch;
             padding: 0;
             overflow: hidden;
+            overflow-anchor: none;
+            contain: layout paint;
         }
 
         .module-run {
@@ -1960,6 +1964,23 @@
             if (scrollArea) scrollArea.scrollTop = 0;
         }
 
+        function keepEstimateScrollStable(callback) {
+            const scrollArea = document.querySelector('.estimate-scroll');
+            const scrollTop = scrollArea?.scrollTop ?? 0;
+            const pageX = window.scrollX;
+            const pageY = window.scrollY;
+
+            callback();
+
+            if (scrollArea) scrollArea.scrollTop = scrollTop;
+            if (mqDesktop.matches) window.scrollTo(pageX, pageY);
+
+            requestAnimationFrame(() => {
+                if (scrollArea) scrollArea.scrollTop = scrollTop;
+                if (mqDesktop.matches) window.scrollTo(pageX, pageY);
+            });
+        }
+
         function openModal(defaultGrade = null) {
             if (defaultGrade) {
                 const radio = document.querySelector(`input[name="grade"][value="${defaultGrade}"]`);
@@ -2117,32 +2138,34 @@
         }
 
         function calculatePrice() {
-            const estimateWidth = getEstimateWidth();
-            const cmValue = estimateWidth.width;
-            const jaResult = document.getElementById('jaResult');
-            const regularPrice = document.getElementById('regularPrice');
-            const totalPrice = document.getElementById('totalPrice');
-            const grade = document.querySelector('input[name="grade"]:checked').value;
-            const config = document.querySelector('input[name="config"]:checked').value;
-            syncWidthPresets();
+            keepEstimateScrollStable(() => {
+                const estimateWidth = getEstimateWidth();
+                const cmValue = estimateWidth.width;
+                const jaResult = document.getElementById('jaResult');
+                const regularPrice = document.getElementById('regularPrice');
+                const totalPrice = document.getElementById('totalPrice');
+                const grade = document.querySelector('input[name="grade"]:checked').value;
+                const config = document.querySelector('input[name="config"]:checked').value;
+                syncWidthPresets();
 
-            if (!cmValue || cmValue <= 0) {
-                jaResult.innerText = '';
-                regularPrice.innerHTML = '0<small>원</small>';
-                totalPrice.innerHTML = '0<small>원</small>';
-                updateModulePreview([], config, cmValue);
-                return;
-            }
+                if (!cmValue || cmValue <= 0) {
+                    jaResult.innerText = '';
+                    regularPrice.innerHTML = '0<small>원</small>';
+                    totalPrice.innerHTML = '0<small>원</small>';
+                    updateModulePreview([], config, cmValue);
+                    return;
+                }
 
-            const pricingUnitCount = Math.ceil(cmValue / 30);
-            const cabinetWidths = getCabinetWidths(cmValue);
-            const price = pricingUnitCount * getUnitPrice(grade) + PRICES.configAddon[config];
-            const benefitPrice = applySpecialBenefit(price);
+                const pricingUnitCount = Math.ceil(cmValue / 30);
+                const cabinetWidths = getCabinetWidths(cmValue);
+                const price = pricingUnitCount * getUnitPrice(grade) + PRICES.configAddon[config];
+                const benefitPrice = applySpecialBenefit(price);
 
-            jaResult.innerText = `${estimateWidth.label} ${cmValue}cm · 장폭 ${formatCabinetWidths(cabinetWidths)} · ${FINISH_SUMMARY}`;
-            regularPrice.innerHTML = `${price.toLocaleString()}<small>원</small>`;
-            totalPrice.innerHTML = `${benefitPrice.toLocaleString()}<small>원</small>`;
-            updateModulePreview(cabinetWidths, config, cmValue);
+                jaResult.innerText = `${estimateWidth.label} ${cmValue}cm · 장폭 ${formatCabinetWidths(cabinetWidths)} · ${FINISH_SUMMARY}`;
+                regularPrice.innerHTML = `${price.toLocaleString()}<small>원</small>`;
+                totalPrice.innerHTML = `${benefitPrice.toLocaleString()}<small>원</small>`;
+                updateModulePreview(cabinetWidths, config, cmValue);
+            });
         }
 
         function openPhotoDialog() {
