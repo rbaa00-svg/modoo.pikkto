@@ -542,7 +542,7 @@
 
         .photo-dialog-actions {
             display: grid;
-            grid-template-columns: 1fr 1.35fr;
+            grid-template-columns: 1fr;
             gap: 9px;
             margin-top: 20px;
         }
@@ -552,11 +552,6 @@
             border-radius: 16px;
             font-size: 14px;
             font-weight: 950;
-        }
-
-        .photo-dialog-secondary {
-            color: #64748b;
-            background: #f1f5f9;
         }
 
         .photo-dialog-primary {
@@ -1623,11 +1618,10 @@
                     <path d="M12 16a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z" stroke="currentColor" stroke-width="1.9"/>
                 </svg>
             </div>
-            <h2 id="photoDialogTitle">설치할 위치의 사진을 준비하셨나요?</h2>
+            <h2 id="photoDialogTitle">설치할 공간의 사진을 준비하셨나요</h2>
             <p>사진이 있으면 상담이 더 빠르게 진행됩니다.</p>
             <div class="photo-dialog-actions">
-                <button type="button" class="photo-dialog-secondary" onclick="confirmPhotoReady()">아니요</button>
-                <button type="button" id="photoDialogConfirm" class="photo-dialog-primary" onclick="confirmPhotoReady()">예</button>
+                <button type="button" id="photoDialogConfirm" class="photo-dialog-primary" onclick="confirmPhotoReady()">진행 하기</button>
             </div>
         </section>
     </div>
