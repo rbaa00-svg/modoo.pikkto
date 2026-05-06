@@ -1,0 +1,6 @@
+.playwright-mcp/
+wardrobe-*.png
+current-browser-screen.png
+node_modules/
+.env
+.env.*

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-label="붙박이장 로고">
+  <rect x="14" y="14" width="272" height="272" fill="#fff"/>
+  <path d="M18 18h264v264H18zM26 26h248v248H26z" fill="none" stroke="#111" stroke-width="5"/>
+  <path d="M110 26v248M200 26v248" fill="none" stroke="#111" stroke-width="4.5"/>
+  <path d="M110 76h90M110 130h90M110 184h90M26 146h84" fill="none" stroke="#111" stroke-width="4.5"/>
+  <path d="M210 214h64M210 204v20M274 204v20" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="square"/>
+  <circle cx="68" cy="260" r="3.2" fill="#111"/>
+  <circle cx="154" cy="260" r="3.2" fill="#111"/>
+  <circle cx="244" cy="260" r="3.2" fill="#111"/>
+</svg>

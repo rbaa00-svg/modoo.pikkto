@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전국 옷장, 붙박이장 성지</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --bg: #f4f6f8;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --ink: #111827;
+            --muted: #667085;
+            --line: #e5e7eb;
+            --blue: #2563eb;
+            --blue-soft: #eff6ff;
+            --navy: #0f172a;
+            --yellow: #fee500;
+            --radius: 18px;
+            --shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+            --mobile-cta-space: 82px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100dvh;
+            font-family: 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 34rem),
+                var(--bg);
+            letter-spacing: 0;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        input[type="number"] {
+            appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            appearance: none;
+            margin: 0;
+        }
+
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            border-bottom: 1px solid rgba(229, 231, 235, 0.9);
+            background: rgba(255, 255, 255, 0.86);
+            backdrop-filter: blur(18px);
+        }
+
+        .topbar-inner {
+            width: min(1180px, 100%);
+            min-height: 68px;
+            margin: 0 auto;
+            padding: 0 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .brand {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: auto;
+        }
+
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border: 1px solid #111827;
+            border-radius: 4px;
+            background: #ffffff;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+            flex: 0 0 auto;
+            overflow: hidden;
+        }
+
+        .brand-mark img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .brand-title {
+            min-width: 0;
+            margin: 0;
+            overflow: hidden;
+            color: var(--ink);
+            font-size: clamp(16px, 2.2vw, 21px);
+            font-weight: 850;
+            line-height: 1.12;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .brand-title strong {
+            color: var(--blue);
+        }
+
+        .header-action {
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            color: var(--blue);
+            background: var(--blue-soft);
+            font-size: 13px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .layout {
+            width: min(1180px, 100%);
+            margin: 0 auto;
+            padding: 24px 22px 116px;
+            display: grid;
+            gap: 22px;
+        }
+
+        .content-column {
+            min-width: 0;
+        }
+
+        .intro-band {
+            margin-bottom: 22px;
+        }
+
+        .summary-strip {
+            padding: 14px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            border: 1px solid rgba(229, 231, 235, 0.88);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.82);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+        }
+
+        .summary-item {
+            padding: 14px 16px;
+            border: 1px solid #e8eef8;
+            border-radius: 16px;
+            background: #ffffff;
+        }
+
+        .summary-item span {
+            display: block;
+            color: #8a94a6;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .summary-item strong {
+            display: block;
+            margin-top: 5px;
+            color: var(--blue);
+            font-size: clamp(18px, 2.4vw, 24px);
+            font-weight: 900;
+        }
+
+        .header-summary {
+            width: auto;
+            padding: 0;
+            display: inline-flex;
+            flex: 0 0 auto;
+            border: 0;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .header-summary .summary-item {
+            min-height: 32px;
+            padding: 5px 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+
+        .header-summary .summary-item span {
+            display: inline;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .header-summary .summary-item strong {
+            display: inline;
+            margin-top: 0;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .section-block {
+            margin-top: 30px;
+        }
+
+        .section-head {
+            margin-bottom: 14px;
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .section-head h2 {
+            margin: 0;
+            font-size: clamp(20px, 2.7vw, 26px);
+            line-height: 1.18;
+            font-weight: 900;
+        }
+
+        .section-head span {
+            color: #98a2b3;
+            font-size: 12px;
+            font-weight: 850;
+            white-space: nowrap;
+        }
+
+        .product-grid {
+            display: flex;
+            gap: 16px;
+            width: 100%;
+            margin: 0;
+            padding: 0 2px 10px 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            overscroll-behavior-x: contain;
+            scroll-padding-left: 2px;
+        }
+
+        .product-carousel-stack {
+            display: grid;
+            gap: 14px;
+        }
+
+        .product-card {
+            flex: 0 0 clamp(240px, 42vw, 310px);
+            border: 1px solid rgba(229, 231, 235, 0.9);
+            border-radius: 22px;
+            background: var(--surface);
+            overflow: hidden;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.07);
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(37, 99, 235, 0.28);
+            box-shadow: 0 18px 44px rgba(15, 23, 42, 0.11);
+        }
+
+        .product-card button {
+            width: 100%;
+            padding: 0;
+            color: inherit;
+            background: transparent;
+            text-align: left;
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            background: #edf2f7;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.35s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.04);
+        }
+
+        .product-body {
+            padding: 15px;
+        }
+
+        .product-badge {
+            width: fit-content;
+            margin-bottom: 10px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            color: var(--blue);
+            background: var(--blue-soft);
+            font-size: 11px;
+            font-weight: 950;
+        }
+
+        .product-badge.premium {
+            color: #7c3aed;
+            background: #f3e8ff;
+        }
+
+        .product-badge.sliding {
+            color: #047857;
+            background: #ecfdf5;
+        }
+
+        .product-body h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 900;
+            line-height: 1.28;
+        }
+
+        .product-site {
+            margin: 7px 0 0;
+            overflow: hidden;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.35;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .product-composition {
+            margin: 5px 0 0;
+            overflow: hidden;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 850;
+            line-height: 1.35;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .product-meta {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .product-meta span {
+            color: #98a2b3;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .product-meta strong {
+            color: var(--blue);
+            font-size: 17px;
+            font-weight: 950;
+            white-space: nowrap;
+        }
+
+        .product-meta strong.premium {
+            color: #7c3aed;
+        }
+
+        .empty-products {
+            padding: 22px;
+            border: 1px dashed #d0d5dd;
+            border-radius: 18px;
+            color: #98a2b3;
+            background: #ffffff;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .site-footer {
+            width: min(1120px, 100%);
+            margin: 4px auto 0;
+            padding: 28px 24px 34px;
+            border-top: 1px solid #e5e7eb;
+            color: #64748b;
+            background: #ffffff;
+            font-size: 12px;
+            line-height: 1.75;
+        }
+
+        .footer-brand {
+            margin: 0 0 4px;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 950;
+        }
+
+        .footer-line {
+            margin: 0;
+        }
+
+        .footer-divider {
+            margin: 0 8px;
+            color: #cbd5e1;
+        }
+
+        .footer-contact {
+            display: inline-block;
+            margin: 2px 0 12px;
+            padding: 0;
+            color: #334155;
+            background: transparent;
+            font-size: 12px;
+            font-weight: 900;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 750;
+            text-decoration: none;
+        }
+
+        .bottom-sheet-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 45;
+            opacity: 0;
+            pointer-events: none;
+            background: rgba(15, 23, 42, 0.58);
+            transition: opacity 0.22s ease;
+        }
+
+        .bottom-sheet-bg.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .estimate-shell {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+            pointer-events: none;
+        }
+
+        .sheet-spacer {
+            flex: 1;
+            pointer-events: auto;
+        }
+
+        .estimate-card {
+            width: 100%;
+            max-height: 92dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-radius: 30px 30px 0 0;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            transform: translateY(100%);
+            transition: transform 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
+            pointer-events: auto;
+        }
+
+        .estimate-shell.open .estimate-card {
+            transform: translateY(0);
+        }
+
+        .estimate-head {
+            padding: 16px 22px 14px;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .sheet-handle {
+            width: 48px;
+            height: 5px;
+            margin: 0 auto 16px;
+            border-radius: 999px;
+            background: #d8dee8;
+        }
+
+        .estimate-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .estimate-title-row h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        .close-button {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            color: #98a2b3;
+            background: #f5f7fb;
+        }
+
+        .estimate-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 22px;
+        }
+
+        .field-group + .field-group {
+            margin-top: 26px;
+        }
+
+        .field-label {
+            margin: 0 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .step-dot {
+            width: 21px;
+            height: 21px;
+            display: inline-grid;
+            place-items: center;
+            border-radius: 999px;
+            color: #ffffff;
+            background: var(--blue);
+            font-size: 11px;
+            font-weight: 900;
+            flex: 0 0 auto;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .width-input {
+            width: 100%;
+            min-height: 64px;
+            padding: 0 58px 0 18px;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            outline: none;
+            color: var(--ink);
+            background: #f8fafc;
+            font-size: 24px;
+            font-weight: 900;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .width-input:focus {
+            border-color: var(--blue);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .unit-label {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            color: #98a2b3;
+            font-size: 17px;
+            font-weight: 900;
+            transform: translateY(-50%);
+        }
+
+        .result-line {
+            min-height: 20px;
+            margin: 9px 0 0;
+            color: var(--blue);
+            font-size: 13px;
+            font-weight: 850;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 9px;
+        }
+
+        .preset-button {
+            min-height: 44px;
+            border: 1px solid #edf0f4;
+            border-radius: 15px;
+            outline: none;
+            color: #667085;
+            background: #f8fafc;
+            font-size: 13px;
+            font-weight: 900;
+            transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+        }
+
+        .preset-button strong {
+            margin-left: 4px;
+            color: inherit;
+            font-weight: 950;
+        }
+
+        .preset-button.active {
+            border-color: var(--blue);
+            color: var(--blue);
+            background: var(--blue-soft);
+        }
+
+        .preset-button:focus-visible {
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 9px;
+        }
+
+        .choice-card,
+        .config-card {
+            display: block;
+            cursor: pointer;
+        }
+
+        .choice-card input,
+        .config-card input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .choice-ui {
+            min-height: 54px;
+            display: grid;
+            place-items: center;
+            border: 1px solid #edf0f4;
+            border-radius: 17px;
+            color: #667085;
+            background: #f8fafc;
+            font-size: 13px;
+            font-weight: 900;
+            transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+        }
+
+        .choice-card input:checked + .choice-ui,
+        .config-card input:checked + .config-ui {
+            border-color: var(--blue);
+            color: var(--blue);
+            background: var(--blue-soft);
+        }
+
+        .module-panel {
+            margin-bottom: 14px;
+            padding: 18px;
+            border-radius: 20px;
+            background: var(--navy);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+        }
+
+        .module-panel p {
+            margin: 0 0 14px;
+            color: #60a5fa;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .module-preview {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            padding: 10px 7px 0;
+            overflow: hidden;
+        }
+
+        .module-empty {
+            align-self: center;
+            color: #8da0b6;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .module-unit {
+            min-width: 8px;
+            flex: 1 1 0;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.38);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .module-finish {
+            position: absolute;
+            z-index: 2;
+            border: 1px solid rgba(147, 197, 253, 0.72);
+            background: rgba(96, 165, 250, 0.32);
+            pointer-events: none;
+        }
+
+        .module-finish.left {
+            top: 10px;
+            bottom: 0;
+            left: 0;
+            width: 5px;
+        }
+
+        .module-finish.right {
+            top: 10px;
+            right: 0;
+            bottom: 0;
+            width: 5px;
+        }
+
+        .module-finish.top-left {
+            top: 0;
+            left: 9px;
+            width: calc(50% - 12px);
+            height: 5px;
+        }
+
+        .module-finish.top-right {
+            top: 0;
+            right: 9px;
+            width: calc(50% - 12px);
+            height: 5px;
+        }
+
+        .module-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            border-top: 2px solid rgba(255, 255, 255, 0.42);
+            animation: drawLine 0.32s ease-out both;
+        }
+
+        .module-line.middle {
+            top: 50%;
+        }
+
+        .module-line.top {
+            top: 20%;
+        }
+
+        .module-line.bottom {
+            bottom: 20%;
+        }
+
+        @keyframes drawLine {
+            from {
+                transform: scaleX(0);
+            }
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        .config-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .config-ui {
+            min-height: 82px;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 42px minmax(0, 1fr);
+            gap: 12px;
+            align-items: center;
+            border: 1px solid #edf0f4;
+            border-radius: 18px;
+            background: #f8fafc;
+            transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+        }
+
+        .config-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            color: #98a2b3;
+        }
+
+        .config-copy strong {
+            display: block;
+            color: var(--ink);
+            font-size: 15px;
+            font-weight: 900;
+            line-height: 1.25;
+        }
+
+        .config-copy span {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 650;
+            line-height: 1.4;
+        }
+
+        .estimate-footer {
+            padding: 17px 22px 24px;
+            border-top: 1px solid #eef2f6;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 -14px 28px rgba(15, 23, 42, 0.04);
+        }
+
+        .total-row {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .total-row span {
+            color: #8a94a6;
+            font-size: 13px;
+            font-weight: 750;
+            line-height: 1.3;
+        }
+
+        .total-price {
+            margin: 0;
+            color: var(--ink);
+            font-size: clamp(27px, 5vw, 36px);
+            font-weight: 950;
+            line-height: 1;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .total-price small {
+            font-size: 17px;
+            font-weight: 900;
+        }
+
+        .kakao-button,
+        .mobile-cta {
+            width: 100%;
+            min-height: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: 18px;
+            color: #111827;
+            background: var(--yellow);
+            font-size: 15px;
+            font-weight: 950;
+            box-shadow: 0 14px 28px rgba(234, 179, 8, 0.18);
+            transition: transform 0.16s ease;
+        }
+
+        .kakao-button:active,
+        .mobile-cta:active {
+            transform: scale(0.98);
+        }
+
+        .mobile-cta-wrap {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 35;
+            min-height: var(--mobile-cta-space);
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            padding: 0 16px max(12px, env(safe-area-inset-bottom));
+            pointer-events: none;
+        }
+
+        .mobile-cta-wrap .mobile-cta {
+            width: 100%;
+            min-height: 54px;
+            border-radius: 18px;
+            pointer-events: auto;
+        }
+
+        .primary-cta {
+            color: #ffffff;
+            background: var(--blue);
+            box-shadow: 0 18px 32px rgba(37, 99, 235, 0.22);
+        }
+
+        @media (min-width: 960px) {
+            .layout {
+                grid-template-columns: minmax(0, 1fr) 390px;
+                align-items: start;
+                padding-top: 30px;
+                padding-bottom: 44px;
+            }
+
+            .estimate-shell {
+                position: sticky;
+                top: 92px;
+                z-index: 1;
+                display: block;
+                min-width: 0;
+                pointer-events: auto;
+            }
+
+            .sheet-spacer,
+            .sheet-handle,
+            .close-button,
+            .bottom-sheet-bg,
+            .mobile-cta-wrap {
+                display: none;
+            }
+
+            .estimate-card,
+            .estimate-shell.open .estimate-card {
+                max-height: calc(100dvh - 118px);
+                border: 1px solid rgba(229, 231, 235, 0.88);
+                border-radius: 28px;
+                transform: none;
+            }
+
+            .estimate-head {
+                padding-top: 22px;
+            }
+
+            .estimate-scroll {
+                padding: 22px 22px 16px;
+            }
+
+            .estimate-footer {
+                padding-bottom: 22px;
+            }
+        }
+
+        @media (max-width: 959px) {
+            body {
+                background: #ffffff;
+            }
+
+            .topbar-inner {
+                min-height: 56px;
+                padding: 0 16px;
+                flex-wrap: nowrap;
+                gap: 10px;
+            }
+
+            .brand-mark {
+                width: 30px;
+                height: 30px;
+                border-radius: 4px;
+            }
+
+            .brand-title {
+                max-width: calc(100vw - 154px);
+            }
+
+            .header-action {
+                display: none;
+            }
+
+            .layout {
+                display: block;
+                padding: 14px 16px calc(var(--mobile-cta-space) + 42px);
+            }
+
+            .intro-band {
+                display: none;
+            }
+
+            .header-summary {
+                margin-left: auto;
+            }
+
+            .header-summary .summary-item {
+                padding: 4px 9px;
+            }
+
+            .section-block {
+                margin-top: 10px;
+            }
+
+            .product-grid {
+                gap: 14px;
+                padding: 0 2px 8px 0;
+            }
+
+            .product-carousel-stack {
+                padding-bottom: var(--mobile-cta-space);
+            }
+
+            .product-card {
+                flex-basis: min(252px, 82vw);
+                border-radius: 20px;
+                box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+            }
+
+            .estimate-card {
+                max-width: 560px;
+                margin: 0 auto;
+            }
+
+            .site-footer {
+                padding: 24px 18px 112px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .brand-title {
+                max-width: calc(100vw - 154px);
+                font-size: 16px;
+            }
+
+            .layout {
+                padding-inline: 14px;
+            }
+
+            .summary-item {
+                padding: 12px;
+            }
+
+            .choice-grid {
+                gap: 7px;
+            }
+
+            .choice-ui {
+                font-size: 12px;
+            }
+
+            .estimate-scroll,
+            .estimate-head,
+            .estimate-footer {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true">
+                    <img src="./logo.svg" alt="">
+                </div>
+                <h1 class="brand-title">전국 옷장·붙박이장 <strong>성지</strong></h1>
+            </div>
+            <button class="header-action" onclick="openModal()">견적</button>
+            <div class="summary-strip header-summary" aria-label="오늘 방문 수">
+                <div class="summary-item">
+                    <span>오늘</span>
+                    <strong>1,311</strong>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="layout">
+        <section class="content-column" aria-label="상품 목록">
+            <div id="catalogSections"></div>
+        </section>
+
+        <aside id="estimateSheet" class="estimate-shell" aria-label="맞춤 견적 패널">
+            <div class="sheet-spacer" onclick="closeModal()"></div>
+            <section class="estimate-card" id="estimatePanel">
+                <div class="estimate-head">
+                    <div class="sheet-handle"></div>
+                    <div class="estimate-title-row">
+                        <h2>견적</h2>
+                        <button class="close-button" onclick="closeModal()" aria-label="견적 패널 닫기">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="estimate-scroll hide-scroll">
+                    <div class="field-group">
+                        <label class="field-label" for="widthInput">
+                            <span class="step-dot">1</span>
+                            가로 길이
+                        </label>
+                        <div class="input-wrap">
+                            <input class="width-input" type="number" id="widthInput" inputmode="numeric" min="1" placeholder="예: 360" oninput="calculatePrice()">
+                            <span class="unit-label">cm</span>
+                        </div>
+                        <div class="preset-grid" id="widthPresets" aria-label="가로 길이 예시">
+                            <button class="preset-button" type="button" data-preset="child">자녀방 <strong>170cm</strong></button>
+                            <button class="preset-button active" type="button" data-preset="master">안방 <strong>370cm</strong></button>
+                        </div>
+                        <p id="jaResult" class="result-line"></p>
+                    </div>
+
+                    <div class="field-group">
+                        <p class="field-label">
+                            <span class="step-dot">2</span>
+                            종류
+                        </p>
+                        <div class="choice-grid">
+                            <label class="choice-card">
+                                <input type="radio" name="grade" value="basic" checked onchange="calculatePrice()">
+                                <span class="choice-ui">기본형</span>
+                            </label>
+                            <label class="choice-card">
+                                <input type="radio" name="grade" value="premium" onchange="calculatePrice()">
+                                <span class="choice-ui">프리미엄</span>
+                            </label>
+                            <label class="choice-card">
+                                <input type="radio" name="grade" value="sliding" onchange="calculatePrice()">
+                                <span class="choice-ui">슬라이딩</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <p class="field-label">
+                            <span class="step-dot">3</span>
+                            내부 구성
+                        </p>
+
+                        <div class="module-panel">
+                            <div id="modulePreview" class="module-preview" aria-label="도면 미리보기"></div>
+                        </div>
+
+                        <div class="config-list">
+                            <label class="config-card">
+                                <input type="radio" name="config" value="expert" checked onchange="calculatePrice()">
+                                <span class="config-ui">
+                                    <span class="config-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7">
+                                            <path d="M4.5 3.5h15v17h-15zM4.5 12h15M12 3.5v17M12 7.2h7.5M4.5 16.5H12" />
+                                        </svg>
+                                    </span>
+                                    <span class="config-copy">
+                                        <strong>전문가 추천 구성</strong>
+                                        <span>상하 분할과 롱코트장을 섞은 수납 최적화</span>
+                                    </span>
+                                </span>
+                            </label>
+
+                            <label class="config-card">
+                                <input type="radio" name="config" value="simple" onchange="calculatePrice()">
+                                <span class="config-ui">
+                                    <span class="config-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7">
+                                            <rect x="5" y="3.5" width="14" height="17" rx="1.8" />
+                                            <path d="M5 12h14" />
+                                        </svg>
+                                    </span>
+                                    <span class="config-copy">
+                                        <strong>심플 2단 구성</strong>
+                                        <span>전체 2단 옷걸이 위주의 기본 수납</span>
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="estimate-footer">
+                    <div class="total-row">
+                        <span>예상가</span>
+                        <p id="totalPrice" class="total-price">0<small>원</small></p>
+                    </div>
+                    <button onclick="goToKakao()" class="kakao-button">
+                        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor" aria-hidden="true">
+                            <path d="M16 4.64c-6.96 0-12.64 4.48-12.64 10.08 0 3.52 2.32 6.64 5.76 8.48l-1.52 5.6c-.16.56.48 1.04.96.72l6.4-4.24c.32 0 .72.08 1.04.08 6.96 0 12.64-4.48 12.64-10.08S22.96 4.64 16 4.64z"/>
+                        </svg>
+                        카톡 상담
+                    </button>
+                </div>
+            </section>
+        </aside>
+    </main>
+
+    <footer class="site-footer">
+        <p class="footer-brand">piKkto</p>
+        <p class="footer-line">
+            대표 정수용
+            <span class="footer-divider">|</span>
+            사업자번호 880-01-03735
+        </p>
+        <p class="footer-line">전화 010-2617-3628</p>
+        <a class="footer-contact" href="https://open.kakao.com/o/gttYvDsi" target="_blank" rel="noopener noreferrer">문의 하기 카카오톡 연결하기</a>
+        <nav class="footer-links" aria-label="정책 링크">
+            <a href="#">이용약관</a>
+            <a href="#">개인정보처리방침</a>
+            <a href="#">메시지 연동 이용약관</a>
+        </nav>
+    </footer>
+
+    <div id="modalOverlay" class="bottom-sheet-bg" onclick="closeModal()"></div>
+
+    <div class="mobile-cta-wrap">
+        <button onclick="openModal()" class="mobile-cta primary-cta">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            견적 보기
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
+        import { getFirestore, collection, onSnapshot, orderBy, query } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCnX8ruYXB17iDN8n-E7RDLVCT9OH1Bxng",
+            authDomain: "modoopikkto.firebaseapp.com",
+            projectId: "modoopikkto",
+            storageBucket: "modoopikkto.firebasestorage.app",
+            messagingSenderId: "124092898069",
+            appId: "1:124092898069:web:4b0ed034f4ab203df4a71c",
+            measurementId: "G-Y56YVM5YDR"
+        };
+        const firebaseApp = initializeApp(firebaseConfig);
+        const db = getFirestore(firebaseApp);
+        const CATALOG_STORAGE_KEY = 'pikktoCatalog:v1';
+        const CATEGORY_LABELS = {
+            basic: '실속형',
+            premium: '프리미엄',
+            sliding: '슬라이딩'
+        };
+        const DEFAULT_CATALOG = [
+            {
+                id: 'basic-white',
+                category: 'basic',
+                name: '매트 화이트 자녀방',
+                site: '서울 강서 자녀방 현장',
+                composition: '짧은장+긴장+서랍장',
+                widthCm: 150,
+                price: 550000,
+                unitPrice: 110000,
+                image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=520&q=82'
+            },
+            {
+                id: 'basic-sand',
+                category: 'basic',
+                name: '샌드 베이지 슬림장',
+                site: '인천 송도 아이방 현장',
+                composition: '짧은장+긴장',
+                widthCm: 150,
+                price: 590000,
+                unitPrice: 118000,
+                image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=520&q=82'
+            },
+            {
+                id: 'premium-oak',
+                category: 'premium',
+                name: '시그니처 매트 오크',
+                site: '분당 정자동 안방 현장',
+                composition: '긴장+짧은장+서랍장+이불장',
+                widthCm: 400,
+                price: 1580000,
+                unitPrice: 145000,
+                image: 'https://images.unsplash.com/photo-1558997519-83ea9252edf8?auto=format&fit=crop&w=700&q=82'
+            },
+            {
+                id: 'sliding-mirror',
+                category: 'sliding',
+                name: '미러 슬라이딩장',
+                site: '하남 미사 드레스룸 현장',
+                composition: '긴장+긴장+서랍장',
+                widthCm: 300,
+                price: 1600000,
+                unitPrice: 160000,
+                image: 'https://images.unsplash.com/photo-1616046229478-9901c5536a45?auto=format&fit=crop&w=700&q=82'
+            }
+        ];
+        const PRICES = {
+            configAddon: {
+                expert: 20000,
+                simple: 0
+            }
+        };
+        const WIDTH_PRESETS = {
+            child: {
+                label: '자녀방',
+                width: 170
+            },
+            master: {
+                label: '안방',
+                width: 370
+            }
+        };
+        const FINISH_SUMMARY = '마감재 4개(좌1·우1·상단2)';
+        const KAKAO_OPEN_CHAT_URL = 'https://open.kakao.com/o/gttYvDsi';
+        let catalog = loadCatalog();
+        let activeWidthPreset = 'master';
+        let catalogRotateTimers = [];
+
+        const mqDesktop = window.matchMedia('(min-width: 960px)');
+
+        function formatPrice(value) {
+            return `${Number(value || 0).toLocaleString()}원`;
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function escapeAttr(value) {
+            return escapeHtml(value);
+        }
+
+        function normalizeProduct(product) {
+            const widthCm = Math.max(1, Number(product.widthCm) || 150);
+            const price = Math.max(0, Number(product.price) || 0);
+            const moduleCount = Math.max(1, Math.ceil(widthCm / 30));
+
+            return {
+                id: product.id || `item-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                category: CATEGORY_LABELS[product.category] ? product.category : 'basic',
+                name: String(product.name || '상품명').trim(),
+                site: String(product.site || '목업 현장').trim(),
+                composition: String(product.composition || '짧은장+긴장+서랍장').trim(),
+                widthCm,
+                price,
+                unitPrice: Math.max(0, Number(product.unitPrice) || Math.ceil(price / moduleCount)),
+                image: String(product.image || '').trim()
+            };
+        }
+
+        function loadCatalog() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(CATALOG_STORAGE_KEY) || 'null');
+                if (Array.isArray(saved)) {
+                    return saved.map(normalizeProduct);
+                }
+            } catch (error) {
+                console.warn('Catalog load failed', error);
+            }
+
+            return DEFAULT_CATALOG.map(normalizeProduct);
+        }
+
+        function cacheCatalog(nextCatalog) {
+            localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(nextCatalog.map(normalizeProduct)));
+        }
+
+        function subscribeCatalog() {
+            const productsQuery = query(collection(db, 'products'), orderBy('order', 'asc'));
+            onSnapshot(productsQuery, (snapshot) => {
+                if (snapshot.empty) {
+                    catalog = loadCatalog();
+                } else {
+                    catalog = snapshot.docs.map((docSnapshot) => normalizeProduct({
+                        id: docSnapshot.id,
+                        ...docSnapshot.data()
+                    }));
+                    cacheCatalog(catalog);
+                }
+
+                renderCatalog();
+                calculatePrice();
+            }, (error) => {
+                console.warn('Firestore catalog sync failed', error);
+                renderCatalog();
+                calculatePrice();
+            });
+        }
+
+        function getProducts(category) {
+            return catalog.filter((item) => item.category === category);
+        }
+
+        function getUnitPrice(category) {
+            const products = getProducts(category);
+            const cheapest = products
+                .filter((item) => item.unitPrice > 0)
+                .sort((a, b) => a.unitPrice - b.unitPrice)[0];
+
+            return cheapest?.unitPrice || normalizeProduct(DEFAULT_CATALOG.find((item) => item.category === category)).unitPrice;
+        }
+
+        function renderCatalog() {
+            const root = document.getElementById('catalogSections');
+            const products = Object.entries(CATEGORY_LABELS).flatMap(([category, label]) => (
+                getProducts(category).map((item) => ({ ...item, category, categoryLabel: label }))
+            ));
+            const renderCards = (items) => items.length
+                ? items.map((item) => `
+                    <article class="product-card">
+                        <button onclick="openModal('${item.category}')" aria-label="${escapeAttr(item.name)} 견적 보기">
+                            <div class="product-image">
+                                <img src="${escapeAttr(item.image)}" alt="${escapeAttr(item.name)}" loading="lazy">
+                            </div>
+                            <div class="product-body">
+                                <div class="product-badge ${item.category === 'premium' ? 'premium' : item.category === 'sliding' ? 'sliding' : ''}">${escapeHtml(item.categoryLabel)}</div>
+                                <h3>${escapeHtml(item.name)}</h3>
+                                <p class="product-site">${escapeHtml(item.site)}</p>
+                                <p class="product-composition">${escapeHtml(item.composition)}</p>
+                                <div class="product-meta">
+                                    <span>${item.widthCm}cm</span>
+                                    <strong class="${item.category === 'premium' ? 'premium' : ''}">${formatPrice(item.price)}</strong>
+                                </div>
+                            </div>
+                        </button>
+                    </article>
+                `).join('')
+                : '<div class="empty-products">등록된 항목 없음</div>';
+            const forwardCards = renderCards(products);
+            const reverseCards = renderCards([...products].reverse());
+            const forwardLoopCards = products.length ? `${forwardCards}${forwardCards}` : forwardCards;
+            const reverseLoopCards = products.length ? `${reverseCards}${reverseCards}` : reverseCards;
+
+            root.innerHTML = `
+                <section class="section-block">
+                    <div class="section-head">
+                        <h2>성지 라인업</h2>
+                        <span>교차 자동 회전</span>
+                    </div>
+                    <div class="product-carousel-stack">
+                        <div class="product-grid hide-scroll" id="productCarouselForward">${forwardLoopCards}</div>
+                        <div class="product-grid hide-scroll" id="productCarouselReverse">${reverseLoopCards}</div>
+                    </div>
+                </section>
+            `;
+            startCatalogAutoRotate();
+        }
+
+        function startCatalogAutoRotate() {
+            catalogRotateTimers.forEach((timer) => cancelAnimationFrame(timer.frame));
+            catalogRotateTimers = [];
+
+            setupCatalogAutoRotate(document.getElementById('productCarouselForward'), 1);
+            setupCatalogAutoRotate(document.getElementById('productCarouselReverse'), -1);
+        }
+
+        function setupCatalogAutoRotate(carousel, direction) {
+            if (!carousel || carousel.children.length < 2) return;
+
+            if (direction < 0) {
+                requestAnimationFrame(() => {
+                    carousel.scrollLeft = carousel.scrollWidth / 2;
+                });
+            }
+
+            const state = {
+                frame: 0,
+                lastTime: 0
+            };
+            const speed = 0.045;
+            const rotate = (time) => {
+                if (!state.lastTime) state.lastTime = time;
+                const delta = Math.min(48, time - state.lastTime);
+                state.lastTime = time;
+
+                const loopWidth = carousel.scrollWidth / 2;
+                if (loopWidth > carousel.clientWidth) {
+                    carousel.scrollLeft += direction * speed * delta;
+
+                    if (direction > 0 && carousel.scrollLeft >= loopWidth) {
+                        carousel.scrollLeft -= loopWidth;
+                    }
+
+                    if (direction < 0 && carousel.scrollLeft <= 0) {
+                        carousel.scrollLeft += loopWidth;
+                    }
+                }
+
+                state.frame = requestAnimationFrame(rotate);
+            };
+
+            state.frame = requestAnimationFrame(rotate);
+            catalogRotateTimers.push(state);
+        }
+
+        function resetEstimateScroll() {
+            const scrollArea = document.querySelector('.estimate-scroll');
+            if (scrollArea) scrollArea.scrollTop = 0;
+        }
+
+        function openModal(defaultGrade = null) {
+            if (defaultGrade) {
+                const radio = document.querySelector(`input[name="grade"][value="${defaultGrade}"]`);
+                if (radio) radio.checked = true;
+                calculatePrice();
+            }
+
+            const sheet = document.getElementById('estimateSheet');
+            const overlay = document.getElementById('modalOverlay');
+
+            if (mqDesktop.matches) {
+                resetEstimateScroll();
+                sheet.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => document.getElementById('widthInput').focus(), 260);
+                return;
+            }
+
+            overlay.classList.add('open');
+            sheet.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => document.getElementById('widthInput').focus(), 260);
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+            document.getElementById('estimateSheet').classList.remove('open');
+            document.body.style.overflow = '';
+            document.getElementById('widthInput').blur();
+        }
+
+        function updateModulePreview(cabinetCount, config) {
+            const preview = document.getElementById('modulePreview');
+            preview.innerHTML = '';
+
+            if (cabinetCount <= 0) {
+                return;
+            }
+
+            ['left', 'right', 'top-left', 'top-right'].forEach((position) => {
+                const finish = document.createElement('span');
+                finish.className = `module-finish ${position}`;
+                preview.appendChild(finish);
+            });
+
+            for (let i = 0; i < cabinetCount; i++) {
+                const module = document.createElement('span');
+                module.className = 'module-unit';
+
+                const line = document.createElement('span');
+                const lineType = config === 'expert' ? ['middle', 'top', 'bottom'][i % 3] : 'middle';
+                line.className = `module-line ${lineType}`;
+
+                module.appendChild(line);
+                preview.appendChild(module);
+            }
+        }
+
+        function getCabinetCount(widthCm) {
+            return Math.max(1, Math.round(Number(widthCm || 0) / 90));
+        }
+
+        function getEstimateWidth() {
+            const cmInput = document.getElementById('widthInput');
+            const customWidth = Number(cmInput.value);
+            if (customWidth > 0) {
+                return {
+                    label: '직접 입력',
+                    width: customWidth
+                };
+            }
+
+            const preset = WIDTH_PRESETS[activeWidthPreset] || WIDTH_PRESETS.master;
+            return {
+                label: preset.label,
+                width: preset.width
+            };
+        }
+
+        function syncWidthPresets() {
+            const hasCustomWidth = Number(document.getElementById('widthInput').value) > 0;
+            document.querySelectorAll('.preset-button').forEach((button) => {
+                button.classList.toggle('active', !hasCustomWidth && button.dataset.preset === activeWidthPreset);
+            });
+        }
+
+        function calculatePrice() {
+            const estimateWidth = getEstimateWidth();
+            const cmValue = estimateWidth.width;
+            const jaResult = document.getElementById('jaResult');
+            const totalPrice = document.getElementById('totalPrice');
+            const grade = document.querySelector('input[name="grade"]:checked').value;
+            const config = document.querySelector('input[name="config"]:checked').value;
+            syncWidthPresets();
+
+            if (!cmValue || cmValue <= 0) {
+                jaResult.innerText = '';
+                totalPrice.innerHTML = '0<small>원</small>';
+                updateModulePreview(0, config);
+                return;
+            }
+
+            const pricingUnitCount = Math.ceil(cmValue / 30);
+            const cabinetCount = getCabinetCount(cmValue);
+            const price = pricingUnitCount * getUnitPrice(grade) + PRICES.configAddon[config];
+
+            jaResult.innerText = `${estimateWidth.label} ${cmValue}cm · 900장 ${cabinetCount}개 · ${FINISH_SUMMARY}`;
+            totalPrice.innerHTML = `${price.toLocaleString()}<small>원</small>`;
+            updateModulePreview(cabinetCount, config);
+        }
+
+        function goToKakao() {
+            const estimateWidth = getEstimateWidth();
+            const finalPrice = document.getElementById('totalPrice').innerText;
+            if (confirm(`${estimateWidth.label} ${estimateWidth.width}cm 기준 예상 견적은 ${finalPrice}입니다.\n전문 상담사와 1:1 채팅을 연결할까요?`)) {
+                window.open(KAKAO_OPEN_CHAT_URL, '_blank', 'noopener,noreferrer');
+            }
+        }
+
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.calculatePrice = calculatePrice;
+        window.goToKakao = goToKakao;
+
+        document.getElementById('widthPresets').addEventListener('click', (event) => {
+            const button = event.target.closest('button[data-preset]');
+            if (!button) return;
+
+            activeWidthPreset = button.dataset.preset;
+            document.getElementById('widthInput').value = '';
+            calculatePrice();
+        });
+
+        renderCatalog();
+        calculatePrice();
+        subscribeCatalog();
+        window.addEventListener('storage', (event) => {
+            if (event.key !== CATALOG_STORAGE_KEY) return;
+            catalog = loadCatalog();
+            renderCatalog();
+            calculatePrice();
+        });
+        window.addEventListener('load', () => {
+            resetEstimateScroll();
+            setTimeout(resetEstimateScroll, 100);
+        });
+        window.addEventListener('pageshow', () => {
+            resetEstimateScroll();
+            setTimeout(resetEstimateScroll, 100);
+        });
+        mqDesktop.addEventListener('change', resetEstimateScroll);
+    </script>
+</body>
+</html>

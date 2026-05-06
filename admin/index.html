@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전국 옷장·붙박이장 성지 Admin</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --bg: #f5f7fb;
+            --surface: #ffffff;
+            --ink: #111827;
+            --muted: #667085;
+            --line: #e5e7eb;
+            --blue: #2563eb;
+            --soft: #eff6ff;
+            --danger: #dc2626;
+            --shadow: 0 18px 46px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100dvh;
+            font-family: 'Pretendard', system-ui, sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            letter-spacing: 0;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .shell {
+            width: min(1120px, 100%);
+            margin: 0 auto;
+            padding: 22px;
+        }
+
+        .topbar {
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border: 1px solid #111827;
+            border-radius: 4px;
+            background: #ffffff;
+            flex: 0 0 auto;
+            overflow: hidden;
+        }
+
+        .brand-mark img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(18px, 3vw, 24px);
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .link-button,
+        .ghost-button {
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            color: var(--blue);
+            background: var(--soft);
+            font-size: 13px;
+            font-weight: 900;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .login-card,
+        .panel {
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .login-card {
+            width: min(420px, 100%);
+            margin: 12vh auto 0;
+            padding: 24px;
+        }
+
+        .login-card h2,
+        .panel h2 {
+            margin: 0 0 18px;
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        label {
+            display: grid;
+            gap: 7px;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        input,
+        select {
+            min-height: 48px;
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 0 13px;
+            color: var(--ink);
+            background: #f8fafc;
+            outline: none;
+            font-weight: 750;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+            background: #ffffff;
+        }
+
+        .primary-button {
+            min-height: 50px;
+            border-radius: 16px;
+            color: #ffffff;
+            background: var(--blue);
+            font-weight: 950;
+        }
+
+        .google-button {
+            min-height: 50px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            color: var(--ink);
+            background: #ffffff;
+            font-weight: 950;
+        }
+
+        .local-button {
+            min-height: 48px;
+            border: 1px solid #bbf7d0;
+            border-radius: 16px;
+            color: #047857;
+            background: #ecfdf5;
+            font-weight: 950;
+        }
+
+        .danger-button {
+            color: var(--danger);
+            background: #fef2f2;
+        }
+
+        .error {
+            min-height: 20px;
+            margin: 0;
+            color: var(--danger);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .login-note {
+            margin: -4px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 380px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .panel {
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            min-height: 40px;
+            padding: 0 15px;
+            border-radius: 999px;
+            color: #475467;
+            background: #f2f4f7;
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .tab.active {
+            color: var(--blue);
+            background: var(--soft);
+        }
+
+        .item-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .item-card {
+            display: grid;
+            grid-template-columns: 94px minmax(0, 1fr);
+            gap: 12px;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: #ffffff;
+        }
+
+        .item-card img {
+            width: 94px;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border-radius: 14px;
+            background: #eef2f7;
+        }
+
+        .item-main {
+            min-width: 0;
+        }
+
+        .item-main strong {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 15px;
+            font-weight: 950;
+        }
+
+        .item-main span {
+            display: block;
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .item-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 10px;
+        }
+
+        .small-button {
+            min-height: 32px;
+            padding: 0 11px;
+            border-radius: 999px;
+            color: var(--blue);
+            background: var(--soft);
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .preview {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: #eef2f7;
+        }
+
+        .form-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .wide {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 860px) {
+            .shell {
+                padding: 16px;
+            }
+
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                align-items: start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <section id="loginView" class="login-card">
+            <h2>Admin</h2>
+            <form id="loginForm" class="form-grid">
+                <button class="google-button" id="googleLoginButton" type="button">Google로 로그인</button>
+                <button class="local-button hidden" id="localLoginButton" type="button">로컬 테스트 진입</button>
+                <p class="login-note">허용 계정: rbaa00@gmail.com</p>
+                <p id="loginError" class="error"></p>
+            </form>
+        </section>
+
+        <section id="adminView" class="hidden">
+            <header class="topbar">
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true">
+                        <img src="../logo.svg" alt="">
+                    </div>
+                    <h1>상품 관리</h1>
+                </div>
+                <div>
+                    <a class="link-button" href="../index.html">FE 보기</a>
+                    <button class="ghost-button" id="logoutButton">로그아웃</button>
+                </div>
+            </header>
+
+            <div class="admin-grid">
+                <section class="panel">
+                    <div class="tabs" id="tabs"></div>
+                    <div class="item-list" id="itemList"></div>
+                </section>
+
+                <section class="panel">
+                    <h2 id="formTitle">항목 추가</h2>
+                    <form id="itemForm" class="form-grid">
+                        <input id="itemId" type="hidden">
+                        <label>
+                            분류
+                            <select id="category"></select>
+                        </label>
+                        <label>
+                            모델명
+                            <input id="name" required>
+                        </label>
+                        <label>
+                            현장
+                            <input id="site" placeholder="예: 서울 강남 안방 현장" required>
+                        </label>
+                        <label>
+                            장 구성
+                            <input id="composition" placeholder="예: 짧은장+긴장+서랍장" required>
+                        </label>
+                        <label>
+                            사진 URL
+                            <input id="image" placeholder="https://...">
+                        </label>
+                        <label>
+                            사진 파일
+                            <input id="imageFile" type="file" accept="image/*">
+                        </label>
+                        <img id="preview" class="preview hidden" alt="사진 미리보기">
+                        <label>
+                            기준 cm
+                            <input id="widthCm" type="number" min="1" required>
+                        </label>
+                        <label>
+                            견적
+                            <input id="price" type="number" min="0" required>
+                        </label>
+                        <label>
+                            계산 단가
+                            <input id="unitPrice" type="number" min="0" required>
+                        </label>
+                        <div class="form-actions wide">
+                            <button class="primary-button" type="submit">저장</button>
+                            <button class="ghost-button" id="newButton" type="button">새 항목</button>
+                        </div>
+                        <button class="ghost-button danger-button wide" id="resetButton" type="button">기본값 복원</button>
+                    </form>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
+        import {
+            GoogleAuthProvider,
+            getAuth,
+            getRedirectResult,
+            onAuthStateChanged,
+            signInWithRedirect,
+            signOut
+        } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js';
+        import {
+            collection,
+            deleteDoc,
+            doc,
+            getDocs,
+            getFirestore,
+            onSnapshot,
+            orderBy,
+            query,
+            serverTimestamp,
+            setDoc,
+            writeBatch
+        } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
+        import {
+            getDownloadURL,
+            getStorage,
+            ref,
+            uploadBytes
+        } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-storage.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCnX8ruYXB17iDN8n-E7RDLVCT9OH1Bxng",
+            authDomain: "modoopikkto.firebaseapp.com",
+            projectId: "modoopikkto",
+            storageBucket: "modoopikkto.firebasestorage.app",
+            messagingSenderId: "124092898069",
+            appId: "1:124092898069:web:4b0ed034f4ab203df4a71c",
+            measurementId: "G-Y56YVM5YDR"
+        };
+        const firebaseApp = initializeApp(firebaseConfig);
+        const auth = getAuth(firebaseApp);
+        const db = getFirestore(firebaseApp);
+        const storage = getStorage(firebaseApp);
+        const CATALOG_STORAGE_KEY = 'pikktoCatalog:v1';
+        const AUTH_REDIRECT_KEY = 'pikktoAuthRedirect:v1';
+        const ADMIN_EMAIL = 'rbaa00@gmail.com';
+        const LOCAL_HOSTS = new Set(['127.0.0.1', 'localhost']);
+        const isLocalHost = LOCAL_HOSTS.has(window.location.hostname);
+        const googleProvider = new GoogleAuthProvider();
+        googleProvider.setCustomParameters({ login_hint: ADMIN_EMAIL });
+        const CATEGORY_LABELS = {
+            basic: '실속형',
+            premium: '프리미엄',
+            sliding: '슬라이딩'
+        };
+        const DEFAULT_CATALOG = [
+            {
+                id: 'basic-white',
+                category: 'basic',
+                name: '매트 화이트 자녀방',
+                site: '서울 강서 자녀방 현장',
+                composition: '짧은장+긴장+서랍장',
+                widthCm: 150,
+                price: 550000,
+                unitPrice: 110000,
+                image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=520&q=82'
+            },
+            {
+                id: 'basic-sand',
+                category: 'basic',
+                name: '샌드 베이지 슬림장',
+                site: '인천 송도 아이방 현장',
+                composition: '짧은장+긴장',
+                widthCm: 150,
+                price: 590000,
+                unitPrice: 118000,
+                image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=520&q=82'
+            },
+            {
+                id: 'premium-oak',
+                category: 'premium',
+                name: '시그니처 매트 오크',
+                site: '분당 정자동 안방 현장',
+                composition: '긴장+짧은장+서랍장+이불장',
+                widthCm: 400,
+                price: 1580000,
+                unitPrice: 145000,
+                image: 'https://images.unsplash.com/photo-1558997519-83ea9252edf8?auto=format&fit=crop&w=700&q=82'
+            },
+            {
+                id: 'sliding-mirror',
+                category: 'sliding',
+                name: '미러 슬라이딩장',
+                site: '하남 미사 드레스룸 현장',
+                composition: '긴장+긴장+서랍장',
+                widthCm: 300,
+                price: 1600000,
+                unitPrice: 160000,
+                image: 'https://images.unsplash.com/photo-1616046229478-9901c5536a45?auto=format&fit=crop&w=700&q=82'
+            }
+        ];
+
+        let catalog = loadCatalog();
+        let activeCategory = 'basic';
+        let selectedImageFile = null;
+        let selectedImageDataUrl = '';
+        let unsubscribeProducts = null;
+        let loginNotice = '';
+        let localAdminMode = false;
+
+        function formatPrice(value) {
+            return `${Number(value || 0).toLocaleString()}원`;
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function normalizeProduct(product) {
+            const widthCm = Math.max(1, Number(product.widthCm) || 150);
+            const price = Math.max(0, Number(product.price) || 0);
+            const moduleCount = Math.max(1, Math.ceil(widthCm / 30));
+
+            return {
+                id: product.id || `item-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                category: CATEGORY_LABELS[product.category] ? product.category : 'basic',
+                name: String(product.name || '상품명').trim(),
+                site: String(product.site || '목업 현장').trim(),
+                composition: String(product.composition || '짧은장+긴장+서랍장').trim(),
+                widthCm,
+                price,
+                unitPrice: Math.max(0, Number(product.unitPrice) || Math.ceil(price / moduleCount)),
+                image: String(product.image || '').trim()
+            };
+        }
+
+        function loadCatalog() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(CATALOG_STORAGE_KEY) || 'null');
+                if (Array.isArray(saved)) return saved.map(normalizeProduct);
+            } catch (error) {
+                console.warn('Catalog load failed', error);
+            }
+
+            return DEFAULT_CATALOG.map(normalizeProduct);
+        }
+
+        function saveCatalog() {
+            localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(catalog.map(normalizeProduct)));
+        }
+
+        function productDoc(id) {
+            return doc(db, 'products', id);
+        }
+
+        function subscribeCatalog() {
+            if (unsubscribeProducts) unsubscribeProducts();
+
+            const productsQuery = query(collection(db, 'products'), orderBy('order', 'asc'));
+            unsubscribeProducts = onSnapshot(productsQuery, (snapshot) => {
+                if (!snapshot.empty) {
+                    catalog = snapshot.docs.map((docSnapshot) => normalizeProduct({
+                        id: docSnapshot.id,
+                        ...docSnapshot.data()
+                    }));
+                    saveCatalog();
+                }
+
+                renderTabs();
+                renderList();
+                renderFormOptions();
+            }, (error) => {
+                console.warn('Firestore catalog sync failed', error);
+                renderTabs();
+                renderList();
+                renderFormOptions();
+            });
+        }
+
+        async function uploadImageIfNeeded(id, currentImage) {
+            if (!selectedImageFile) return currentImage;
+            if (localAdminMode && selectedImageDataUrl) return selectedImageDataUrl;
+
+            const safeName = selectedImageFile.name.replace(/[^a-zA-Z0-9._-]/g, '-');
+            const imageRef = ref(storage, `products/${id}/${Date.now()}-${safeName}`);
+            await uploadBytes(imageRef, selectedImageFile);
+            return getDownloadURL(imageRef);
+        }
+
+        function renderTabs() {
+            document.getElementById('tabs').innerHTML = Object.entries(CATEGORY_LABELS).map(([key, label]) => `
+                <button class="tab ${activeCategory === key ? 'active' : ''}" data-category="${key}">${label}</button>
+            `).join('');
+        }
+
+        function renderList() {
+            const items = catalog.filter((item) => item.category === activeCategory);
+            document.getElementById('itemList').innerHTML = items.length ? items.map((item) => `
+                <article class="item-card">
+                    <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
+                    <div class="item-main">
+                        <strong>${escapeHtml(item.name)}</strong>
+                        <span>${escapeHtml(item.site)} · ${escapeHtml(item.composition)} · ${item.widthCm}cm · ${formatPrice(item.price)} · 단가 ${formatPrice(item.unitPrice)}</span>
+                        <div class="item-actions">
+                            <button class="small-button" data-edit="${item.id}">수정</button>
+                            <button class="small-button danger-button" data-delete="${item.id}">삭제</button>
+                        </div>
+                    </div>
+                </article>
+            `).join('') : '<div class="error">등록된 항목이 없습니다.</div>';
+        }
+
+        function renderFormOptions() {
+            document.getElementById('category').innerHTML = Object.entries(CATEGORY_LABELS).map(([key, label]) => `
+                <option value="${key}">${label}</option>
+            `).join('');
+        }
+
+        function setPreview(src) {
+            const preview = document.getElementById('preview');
+            preview.src = src || '';
+            preview.classList.toggle('hidden', !src);
+        }
+
+        function resetForm(category = activeCategory) {
+            document.getElementById('formTitle').innerText = '항목 추가';
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemId').value = '';
+            document.getElementById('category').value = category;
+            document.getElementById('site').value = '목업 현장';
+            document.getElementById('composition').value = '짧은장+긴장+서랍장';
+            document.getElementById('widthCm').value = 150;
+            document.getElementById('price').value = 0;
+            document.getElementById('unitPrice').value = 0;
+            selectedImageFile = null;
+            selectedImageDataUrl = '';
+            setPreview('');
+        }
+
+        function editItem(id) {
+            const item = catalog.find((entry) => entry.id === id);
+            if (!item) return;
+
+            document.getElementById('formTitle').innerText = '항목 수정';
+            document.getElementById('itemId').value = item.id;
+            document.getElementById('category').value = item.category;
+            document.getElementById('name').value = item.name;
+            document.getElementById('site').value = item.site;
+            document.getElementById('composition').value = item.composition;
+            document.getElementById('image').value = item.image;
+            document.getElementById('widthCm').value = item.widthCm;
+            document.getElementById('price').value = item.price;
+            document.getElementById('unitPrice').value = item.unitPrice;
+            setPreview(item.image);
+        }
+
+        function renderAdmin() {
+            renderTabs();
+            renderList();
+            renderFormOptions();
+            resetForm(activeCategory);
+            if (localAdminMode) return;
+            subscribeCatalog();
+        }
+
+        function showAdmin() {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('adminView').classList.remove('hidden');
+            renderAdmin();
+        }
+
+        function showLogin(message = loginNotice) {
+            document.getElementById('adminView').classList.add('hidden');
+            document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('loginError').innerText = message || '';
+            document.getElementById('localLoginButton').classList.toggle('hidden', !isLocalHost);
+            if (unsubscribeProducts) {
+                unsubscribeProducts();
+                unsubscribeProducts = null;
+            }
+        }
+
+        document.getElementById('localLoginButton').classList.toggle('hidden', !isLocalHost);
+
+        document.getElementById('googleLoginButton').addEventListener('click', async (event) => {
+            const loginButton = event.currentTarget;
+            loginNotice = '';
+            document.getElementById('loginError').innerText = '';
+
+            try {
+                loginButton.disabled = true;
+                sessionStorage.setItem(AUTH_REDIRECT_KEY, '1');
+                await signInWithRedirect(auth, googleProvider);
+            } catch (error) {
+                console.error(error);
+                sessionStorage.removeItem(AUTH_REDIRECT_KEY);
+                document.getElementById('loginError').innerText = `Google 로그인 실패: ${error.code || 'unknown'}`;
+            } finally {
+                loginButton.disabled = false;
+            }
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', async () => {
+            if (localAdminMode) {
+                localAdminMode = false;
+                showLogin('');
+                return;
+            }
+
+            await signOut(auth);
+        });
+
+        document.getElementById('tabs').addEventListener('click', (event) => {
+            const category = event.target.dataset.category;
+            if (!category) return;
+            activeCategory = category;
+            renderAdmin();
+        });
+
+        document.getElementById('itemList').addEventListener('click', async (event) => {
+            const editId = event.target.dataset.edit;
+            const deleteId = event.target.dataset.delete;
+
+            if (editId) {
+                editItem(editId);
+                return;
+            }
+
+            if (deleteId && confirm('삭제할까요?')) {
+                if (localAdminMode) {
+                    catalog = catalog.filter((item) => item.id !== deleteId);
+                    saveCatalog();
+                    renderList();
+                    resetForm(activeCategory);
+                    return;
+                }
+
+                await deleteDoc(productDoc(deleteId));
+            }
+        });
+
+        document.getElementById('image').addEventListener('input', (event) => {
+            setPreview(event.target.value);
+        });
+
+        document.getElementById('imageFile').addEventListener('change', (event) => {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            selectedImageFile = file;
+            const reader = new FileReader();
+            reader.onload = () => {
+                selectedImageDataUrl = String(reader.result || '');
+                setPreview(selectedImageDataUrl);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('price').addEventListener('input', () => {
+            const widthCm = Number(document.getElementById('widthCm').value) || 150;
+            const modules = Math.max(1, Math.ceil(widthCm / 30));
+            const price = Number(document.getElementById('price').value) || 0;
+            const unitInput = document.getElementById('unitPrice');
+            if (!unitInput.dataset.touched) unitInput.value = Math.ceil(price / modules);
+        });
+
+        document.getElementById('unitPrice').addEventListener('input', (event) => {
+            event.target.dataset.touched = '1';
+        });
+
+        document.getElementById('itemForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const saveButton = event.submitter;
+
+            const id = document.getElementById('itemId').value || `item-${Date.now()}`;
+
+            try {
+                saveButton.disabled = true;
+                const imageUrl = await uploadImageIfNeeded(id, document.getElementById('image').value);
+                const product = normalizeProduct({
+                    id,
+                    category: document.getElementById('category').value,
+                    name: document.getElementById('name').value,
+                    site: document.getElementById('site').value,
+                    composition: document.getElementById('composition').value,
+                    image: imageUrl,
+                    widthCm: document.getElementById('widthCm').value,
+                    price: document.getElementById('price').value,
+                    unitPrice: document.getElementById('unitPrice').value
+                });
+
+                activeCategory = product.category;
+                if (localAdminMode) {
+                    const existingIndex = catalog.findIndex((item) => item.id === id);
+                    if (existingIndex >= 0) {
+                        catalog[existingIndex] = product;
+                    } else {
+                        catalog.push(product);
+                    }
+                    saveCatalog();
+                    renderTabs();
+                    renderList();
+                    renderFormOptions();
+                    resetForm(activeCategory);
+                    return;
+                }
+
+                await setDoc(productDoc(id), {
+                    ...product,
+                    order: catalog.findIndex((item) => item.id === id) >= 0
+                        ? catalog.findIndex((item) => item.id === id)
+                        : catalog.length,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+                resetForm(activeCategory);
+            } catch (error) {
+                console.error(error);
+                alert('저장에 실패했습니다. Firebase 권한과 Storage 설정을 확인하세요.');
+            } finally {
+                saveButton.disabled = false;
+            }
+        });
+
+        document.getElementById('newButton').addEventListener('click', () => {
+            resetForm(activeCategory);
+        });
+
+        document.getElementById('resetButton').addEventListener('click', async () => {
+            if (!confirm('기본값으로 복원할까요?')) return;
+            if (localAdminMode) {
+                catalog = DEFAULT_CATALOG.map(normalizeProduct);
+                activeCategory = 'basic';
+                saveCatalog();
+                renderTabs();
+                renderList();
+                renderFormOptions();
+                resetForm(activeCategory);
+                return;
+            }
+
+            const batch = writeBatch(db);
+            const snapshot = await getDocs(collection(db, 'products'));
+            snapshot.forEach((docSnapshot) => batch.delete(docSnapshot.ref));
+            DEFAULT_CATALOG.map(normalizeProduct).forEach((item, index) => {
+                batch.set(productDoc(item.id), {
+                    ...item,
+                    order: index,
+                    updatedAt: serverTimestamp()
+                });
+            });
+            await batch.commit();
+        });
+
+        getRedirectResult(auth)
+            .then((result) => {
+                if (result?.user) sessionStorage.removeItem(AUTH_REDIRECT_KEY);
+            })
+            .catch((error) => {
+                console.error(error);
+                sessionStorage.removeItem(AUTH_REDIRECT_KEY);
+                loginNotice = `Google 로그인 실패: ${error.code || 'unknown'}`;
+                showLogin(loginNotice);
+            });
+
+        document.getElementById('localLoginButton').addEventListener('click', () => {
+            localAdminMode = true;
+            loginNotice = '';
+            catalog = loadCatalog();
+            showAdmin();
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (localAdminMode) return;
+
+            if (user?.email === ADMIN_EMAIL) {
+                sessionStorage.removeItem(AUTH_REDIRECT_KEY);
+                loginNotice = '';
+                showAdmin();
+                return;
+            }
+
+            if (user) {
+                sessionStorage.removeItem(AUTH_REDIRECT_KEY);
+                loginNotice = `허용되지 않은 계정입니다. 현재 계정: ${user.email || '확인 불가'}`;
+                await signOut(auth);
+                showLogin(loginNotice);
+                return;
+            }
+
+            if (sessionStorage.getItem(AUTH_REDIRECT_KEY) === '1') {
+                sessionStorage.removeItem(AUTH_REDIRECT_KEY);
+                loginNotice = 'Google 로그인 결과를 받지 못했습니다. Firebase Auth 승인 도메인에 127.0.0.1이 등록되어 있는지 확인하세요.';
+                showLogin(loginNotice);
+                return;
+            }
+
+            showLogin(loginNotice);
+        });
+    </script>
+</body>
+</html>
